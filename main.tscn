@@ -1,0 +1,137 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://worship extreme verse edit menu.png" type="Texture" id=1]
+[ext_resource path="res://Label2.gd" type="Script" id=3]
+[ext_resource path="res://HFlowContainer2.gd" type="Script" id=4]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends TextureRect
+
+
+# Declare member variables here. Examples:
+# var a = 2
+# var b = \"text\"
+
+
+# Called when the node enters the scene tree for the first time.
+#func _ready():
+#	print(\"hello\")
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta):
+#	pass
+"
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -5.0
+margin_top = 2.0
+margin_right = 1143.0
+margin_bottom = 621.0
+
+[node name="TabContainer" type="TabContainer" parent="."]
+anchor_right = 0.458
+anchor_bottom = 0.446
+margin_left = 30.0
+margin_top = 82.0
+margin_right = 14.2239
+margin_bottom = 36.326
+tab_align = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Slidemenu" type="ScrollContainer" parent="TabContainer/HBoxContainer"]
+margin_bottom = 462.0
+
+[node name="Slidelist" type="VBoxContainer" parent="TabContainer/HBoxContainer/Slidemenu"]
+
+[node name="Preview" type="TextureRect" parent="TabContainer/HBoxContainer"]
+margin_left = 4.0
+margin_right = 970.0
+margin_bottom = 462.0
+size_flags_horizontal = 3
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 6
+script = SubResource( 1 )
+
+[node name="Previewtext" type="RichTextLabel" parent="TabContainer/HBoxContainer/Preview"]
+anchor_left = 0.09
+anchor_top = 0.028
+anchor_right = 0.946
+anchor_bottom = 1.0
+margin_left = 73.67
+margin_top = 139.988
+margin_right = -86.402
+margin_bottom = -38.0
+bbcode_enabled = true
+bbcode_text = "[center][b][u]text[/u][/b][/center]"
+text = "text"
+fit_content_height = true
+scroll_active = false
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HFlowContainer" type="HFlowContainer" parent="TabContainer/VBoxContainer"]
+margin_right = 970.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="TabContainer/VBoxContainer/HFlowContainer"]
+margin_top = 1.0
+margin_right = 37.0
+margin_bottom = 15.0
+text = "Zoom"
+
+[node name="Label2" type="Label" parent="TabContainer/VBoxContainer/HFlowContainer"]
+margin_left = 41.0
+margin_top = 1.0
+margin_right = 57.0
+margin_bottom = 15.0
+text = "    "
+script = ExtResource( 3 )
+
+[node name="HSlider" type="HSlider" parent="TabContainer/VBoxContainer/HFlowContainer"]
+margin_left = 61.0
+margin_right = 970.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+min_value = 100.0
+max_value = 500.0
+value = 250.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/VBoxContainer"]
+margin_top = 20.0
+margin_right = 970.0
+margin_bottom = 462.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HFlowContainer2" type="HFlowContainer" parent="TabContainer/VBoxContainer/ScrollContainer"]
+margin_right = 970.0
+margin_bottom = 442.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/vseparation = 20
+custom_constants/hseparation = 10
+script = ExtResource( 4 )
