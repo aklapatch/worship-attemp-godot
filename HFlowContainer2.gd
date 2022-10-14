@@ -11,14 +11,8 @@ onready var pics_found = []
 onready var zoom_slider = get_node('../../HFlowContainer/HSlider')
 onready var zoom_slider_val = zoom_slider.value
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	#self.vseparation = 10
-	#self.hseparation = 10
-	# load pictures and add them to this node
-	# load from the ~/Pictures dir on windows
+func load_pics(path: String):
 	var dir = Directory.new()
-	var path = "user://images/"
 	var err = dir.make_dir_recursive(path)
 	if err != OK:
 		print("Error %u opening %s" % err, OK)
@@ -39,6 +33,18 @@ func _ready():
 			print("Found directory: " + file_name)
 		else:
 			var file_path = img_path + file_name
+			# only load the image if we don't have it loaded
+			# the node names strip the '.' for some reason
+			var container_name = "container" + file_name.replace(".","")
+			var child_name = "picture" + file_name.replace(".", "")
+			print(child_name)
+			
+			var dup = self.find_node(container_name, true, false)
+			if dup != null:
+				print("Skipping " + file_name)
+				file_name = dir.get_next()
+				continue
+				
 			print("Found file: " + file_path)
 			if file_name.ends_with('png') or file_name.ends_with('jpg'):
 				print("Loading " + file_path)
@@ -54,13 +60,14 @@ func _ready():
 				var aspect_ratio = pic_size.x/pic_size.y
 				var size = Vector2(zoom_slider.value*aspect_ratio, zoom_slider.value)
 		
-				child.name = "picture"
+				child.name = child_name
 				child.expand = true
 				child.set_stretch_mode(TextureRect.STRETCH_KEEP_ASPECT)
 				child.set_texture(texture)
 				child.set_custom_minimum_size(size)
 		
-				var child_container = VBoxContainer.new()	
+				var child_container = VBoxContainer.new()
+				child_container.name = container_name
 				
 				var img_label = Label.new()
 				img_label.text = file_name
@@ -69,9 +76,18 @@ func _ready():
 				child_container.add_child(img_label)
 				child_container.add_child(child)
 				
-				add_child(child_container)
+				self.add_child(child_container)
 				
 		file_name = dir.get_next()
+
+func load_self_pics():
+	load_pics("user://images/")
+	
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	load_self_pics()
+	var add_pic_button = get_node("../../HFlowContainer/Button")
+	add_pic_button.connect("added_img", self, "load_self_pics")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -81,7 +97,7 @@ func _process(delta):
 		for child in self.get_children():
 			# preserve the aspect ratio from the old pic
 			# find the picture and set its size
-			var pic_child = child.find_node("picture", true, false)
+			var pic_child = child.find_node("picture*", true, false)
 			if pic_child != null:
 				var ratio = pic_child.rect_size.x/pic_child.rect_size.y
 				var size = Vector2(zoom_slider_val*ratio, zoom_slider_val)

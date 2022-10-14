@@ -29,18 +29,18 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 15.0
 margin_top = 6.0
-margin_right = 1165.0
-margin_bottom = 624.0
+margin_right = 7.0
+margin_bottom = 5.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="TabContainer" type="TabContainer" parent="."]
-anchor_right = 0.458
-anchor_bottom = 0.446
-margin_left = -11.0
-margin_top = -5.0
-margin_right = 14.308
-margin_bottom = 36.772
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -10.0
+margin_top = -2.0
+margin_right = -15.0
+margin_bottom = -7.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 tab_align = 0
@@ -54,14 +54,14 @@ margin_right = -4.0
 margin_bottom = -4.0
 
 [node name="Slidemenu" type="ScrollContainer" parent="TabContainer/HBoxContainer"]
-margin_bottom = 549.0
+margin_bottom = 558.0
 
 [node name="Slidelist" type="VBoxContainer" parent="TabContainer/HBoxContainer/Slidemenu"]
 
 [node name="Preview" type="TextureRect" parent="TabContainer/HBoxContainer"]
 margin_left = 4.0
-margin_right = 1013.0
-margin_bottom = 549.0
+margin_right = 1003.0
+margin_bottom = 558.0
 size_flags_horizontal = 3
 texture = ExtResource( 1 )
 expand = true
