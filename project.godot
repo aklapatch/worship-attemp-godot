@@ -8,6 +8,16 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "RichTextEffect",
+"class": "RichTextVCenter",
+"language": "GDScript",
+"path": "res://vcenter.gd"
+} ]
+_global_script_class_icons={
+"RichTextVCenter": ""
+}
+
 [application]
 
 config/name="test-ui"
