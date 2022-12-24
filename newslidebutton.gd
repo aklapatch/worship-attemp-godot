@@ -5,6 +5,7 @@ extends Button
 # var a = 2
 # var b = "text"
 onready var pic_script = load("res://PicDisplayButtpn.gd")
+onready var preview_text_script = load("res://slidetext_preview.gd")
 onready var item_list = get_node("../../ScrollContainer/VBoxContainer")
 
 # Called when the node enters the scene tree for the first time.
@@ -38,9 +39,10 @@ func make_new_slide():
 	
 	var new_text = RichTextLabel.new()
 	new_text.bbcode_enabled = true
-	new_text.bbcode_text = "[b]<test text>[/b]"
+	new_text.bbcode_text = "<test text>"
 	new_text.size_flags_horizontal = SIZE_EXPAND_FILL
 	new_text.size_flags_vertical = SIZE_EXPAND_FILL
+	new_text.set_script(preview_text_script)
 	
 	var new_show_button = Button.new()
 	new_show_button.text = "Show"

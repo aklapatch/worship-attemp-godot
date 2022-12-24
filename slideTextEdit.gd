@@ -5,32 +5,32 @@ extends TextEdit
 # var b = "text"
 
 onready var previewtext = get_node("../../../Preview/Previewtext")
-onready var justification  = get_node("../HFlowContainer/VBoxContainer2/OptionButton2")
 
-onready var old_just = justification.selected
+onready var justify_text = 0
 onready var old_txt_len = len(self.text)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	assert(previewtext != null)
+	
+func set_just_push_text(just_val):
+	# Set justification
+	justify_text = just_val
+	var preview_text = self.text
+	if justify_text == 2:
+		# Right justification
+		preview_text = '[right]' + preview_text + '[/right]'
+	elif justify_text == 0:
+		preview_text = '[center]' + preview_text + '[/center]'
+		
+	previewtext.update_text(preview_text)
 
 # reach out to the preview text and update it when we have changed
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 # warning-ignore:unused_argument
 func _process(delta):
 	var new_len = len(self.text)
-	if new_len != old_txt_len or old_just != justification.selected:
-		old_txt_len = new_len
-		old_just = justification.selected
-		
-		# add bbcode tags based on bold/italic buttons
-		var preview_text = self.text
-		
-		# Set justification
-		if justification.selected == 2:
-			# Right justification
-			preview_text = '[right]' + preview_text + '[/right]'
-		elif justification.selected == 0:
-			preview_text = '[center]' + preview_text + '[/center]'
-			
-		previewtext.bbcode_text = preview_text
+	if new_len != old_txt_len:
+		set_just_push_text(justify_text)
+	elif new_len == 0:
+		previewtext.update_text("")

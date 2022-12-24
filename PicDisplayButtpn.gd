@@ -18,6 +18,7 @@ func _ready():
 
 func button_pressed():
 	print("Tex button pressed")
+	# TODO: add code to grab the text from the nested RightText label and push it to the preview
 	
 func resize_self():
 	# change the vertical size to match the aspect ratio of the texture
@@ -29,6 +30,11 @@ func resize_self():
 		var needed_height = int(width*aspect_ratio)
 	
 		self.rect_min_size.y = needed_height
+		
+		# resize the child too
+		var prev_text = get_child(0)
+		prev_text.rect_min_size.y = needed_height
+		prev_text.rect_min_size.x = width
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
