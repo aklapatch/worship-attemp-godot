@@ -28,9 +28,12 @@ func set_just_push_text(just_val):
 # reach out to the preview text and update it when we have changed
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 # warning-ignore:unused_argument
+onready var set_to_zero = false
 func _process(delta):
 	var new_len = len(self.text)
 	if new_len != old_txt_len:
 		set_just_push_text(justify_text)
-	elif new_len == 0:
+		set_to_zero = false
+	elif new_len == 0 and not set_to_zero:
 		previewtext.update_text("")
+		set_to_zero = true

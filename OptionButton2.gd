@@ -19,23 +19,16 @@ func load_font_names(path: String):
 		print("Error opening " + path)
 		return
 		
-	# open the path in an editor
 	var img_path = ProjectSettings.globalize_path(path)
-	print("img path " + img_path)
-	#OS.shell_open(img_path)
 		
 	dir.list_dir_begin()
 	var file_name = dir.get_next()
 	while file_name != "":
-		if dir.current_is_dir():
-			print("Found directory: " + file_name)
-		else:
+		if not dir.current_is_dir():
 			var file_path = img_path + file_name
 				
-			print("Found file: " + file_path)
 			if file_name.ends_with('ttf'):
 				output.append(file_name)
-				print("selected " + file_path)
 				
 		file_name = dir.get_next()
 	return output
