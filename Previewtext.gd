@@ -12,7 +12,7 @@ onready var num_lines = 0
 # When the text changes in this node, push the font size, type, and the text
 # Default to the first node in the slide list
 # TODO: how to handle deleted nodes?
-onready var push_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/TextureButton/RichTextLabel")
+onready var push_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/TextureRect/RichTextLabel")
 # When a slide is selected, it should push itself to this node
 
 func update_text(new_text):

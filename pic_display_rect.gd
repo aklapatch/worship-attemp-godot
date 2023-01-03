@@ -1,4 +1,5 @@
-extends TextureButton
+extends TextureRect
+
 
 # Declare member variables here. Examples:
 # var a = 2
@@ -15,8 +16,8 @@ func _ready():
 func resize_self():
 	# change the vertical size to match the aspect ratio of the texture
 	# If there is no texture, then the texture will be null
-	if self.texture_normal != null:
-		var size = self.texture_normal.get_size()
+	if self.texture != null:
+		var size = self.texture.get_size()
 		var aspect_ratio = size.y/size.x
 		var width = self.rect_size.x
 		var needed_height = int(width*aspect_ratio)
@@ -27,6 +28,3 @@ func resize_self():
 		var prev_text = get_child(0)
 		prev_text.rect_min_size.y = needed_height
 		prev_text.rect_min_size.x = width
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass

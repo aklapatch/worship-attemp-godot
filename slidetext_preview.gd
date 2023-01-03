@@ -1,6 +1,5 @@
 extends RichTextLabel
 
-
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -13,10 +12,9 @@ func _ready():
 	self.size_flags_horizontal = SIZE_EXPAND_FILL | SIZE_SHRINK_CENTER
 	self.size_flags_vertical = SIZE_SHRINK_CENTER
 	self.scroll_active = false
-	self.fit_content_height
+	self.fit_content_height = true
 	num_lines = self.get_visible_line_count()
 	pass # Replace with function body.
-
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -26,6 +24,9 @@ func _process(delta):
 		num_lines = new_num_lines
 		
 		var font = self.get("custom_fonts/normal_font")
+		if font == null:
+			# Return if no valid font is set
+			return
 		# use the font size to get the size we are total
 		var tot_y = font.size * num_lines
 		

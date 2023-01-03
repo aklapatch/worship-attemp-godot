@@ -1,9 +1,5 @@
 extends TextEdit
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
 onready var previewtext = get_node("../../../Preview/Previewtext")
 
 onready var justify_text = 0
@@ -33,6 +29,7 @@ func _process(delta):
 	var new_len = len(self.text)
 	if new_len != old_txt_len:
 		set_just_push_text(justify_text)
+		old_txt_len = new_len
 		set_to_zero = false
 	elif new_len == 0 and not set_to_zero:
 		previewtext.update_text("")
