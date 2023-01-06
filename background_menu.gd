@@ -1,16 +1,17 @@
 extends MenuButton
 
-
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
 onready var prev_tex_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview")
+onready var prev_text_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/Previewtext")
+
 func send_img_to_preview(index: int):
 	var item_tex = self.get_popup().get_item_icon(index)
 	var orig_tex = ImageTexture.new()
 	orig_tex.create_from_image(item_tex.get_data())
 	prev_tex_node.set_texture(orig_tex)
+	# set the push node too
+	assert(prev_text_node != null)
+	prev_text_node.push_node.get_parent().set_texture(orig_tex)
+	
 	pass
 
 # Called when the node enters the scene tree for the first time.

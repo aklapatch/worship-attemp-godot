@@ -7,6 +7,7 @@ extends TextureRect
 
 # Called when the node enters the scene tree for the first time.
 func _ready():	
+	self.stretch_mode = STRETCH_KEEP_ASPECT_CENTERED
 	# set the size based on the texture
 	resize_self()
 	
@@ -18,6 +19,8 @@ func resize_self():
 	# If there is no texture, then the texture will be null
 	if self.texture != null:
 		var size = self.texture.get_size()
+		if size.y == 0 or size.x == 0:
+			return
 		var aspect_ratio = size.y/size.x
 		var width = self.rect_size.x
 		var needed_height = int(width*aspect_ratio)
