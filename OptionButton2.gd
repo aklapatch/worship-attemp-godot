@@ -4,7 +4,8 @@ extends OptionButton
 # var a = 2
 # var b = "text"
 
-onready var preview_node = get_node("../../../../../../VSplitContainer/Preview/Previewtext")
+#onready var preview_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/ViewportContainer/Viewport/Control/Previewtext")
+onready var preview_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/Previewtext")
 onready var usr_fonts = []
 onready var res_fonts = []
 
@@ -56,6 +57,9 @@ func _ready():
 	for font in usr_fonts:
 		self.add_item(font)
 		
+	# Tell the 
+	preview_node.get_parent().resize_self()
+	
 	self.connect("item_selected", self, "item_changed")
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.

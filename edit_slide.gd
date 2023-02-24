@@ -37,6 +37,5 @@ func push_edit_slide():
 	# TODO: If the font is null, then inherit from the font size and font options
 	var slide_font = text_show_rect.get("custom_fonts/normal_font")
 	if slide_font != null:
-		preview_text_node.curr_font = slide_font
 		preview_text_node.set("custom_fonts/normal_font", slide_font)
 	preview_text_node.push_node = text_show_rect

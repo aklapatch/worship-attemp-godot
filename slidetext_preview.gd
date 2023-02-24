@@ -6,6 +6,7 @@ extends RichTextLabel
 
 onready var num_lines = 0
 onready var prev_text = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/Previewtext")
+#onready var prev_text = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/ViewportContainer/Viewport/Control/Previewtext")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -20,10 +21,7 @@ func _ready():
 	var font = prev_text.get("custom_fonts/normal_font")
 	if font != null:
 		self.set("custom_fonts/normal_font", font)
-	pass # Replace with function body.
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	var new_num_lines = self.get_visible_line_count()
 	if new_num_lines != num_lines:

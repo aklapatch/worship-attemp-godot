@@ -20,15 +20,27 @@
 [sub_resource type="GDScript" id=1]
 script/source = "extends TextureRect
 
+onready var text_preview = get_child(0)
+onready var font_size: int = get_node(\"/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer3/FontSize\").value
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = \"text\"
-
-
-# Called when the node enters the scene tree for the first time.
-#func _ready():
-#	print(\"hello\")
+func _ready():
+	resize_self()
+	
+	self.connect(\"item_rect_changed\", self, \"resize_self\")
+	# TODO: add code to grab the text from the nested RightText label and push it to the preview
+	
+func resize_self():
+	# Resize the font of the previewtext based on the size of us
+	var curr_font = text_preview.get(\"custom_fonts/normal_font\")
+	if curr_font != null:
+		curr_font.size = (float(font_size)/100.0) * float(self.rect_size.y)
+		text_preview.set(\"custom_fonts/normal_font\", curr_font)
+		
+func change_font_size(size: int):
+	# Change the font for the previewtext and/or set its size
+	font_size = size
+	text_preview.change_font_size(size)
+	resize_self()
 
 func _input(event):
 	#if event is InputEventMouseButton:
@@ -187,16 +199,12 @@ stretch_mode = 6
 script = SubResource( 1 )
 
 [node name="Previewtext" type="RichTextLabel" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -234.0
-margin_top = -8.5
-margin_right = 232.0
-margin_bottom = 9.5
+margin_left = 124.0
+margin_top = 128.0
+margin_right = 613.0
+margin_bottom = 143.0
 focus_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 4
 size_flags_vertical = 4
 bbcode_enabled = true
 fit_content_height = true
@@ -277,7 +285,10 @@ margin_right = 129.0
 margin_bottom = 42.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-value = 30.0
+min_value = 2.0
+step = 2.0
+value = 12.0
+rounded = true
 script = ExtResource( 6 )
 
 [node name="VBoxContainer4" type="VBoxContainer" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer"]

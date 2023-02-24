@@ -1,6 +1,7 @@
 extends TextEdit
 
-onready var previewtext = get_node("../../../Preview/Previewtext")
+#onready var previewtext = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/ViewportContainer/Viewport/Control/Previewtext")
+onready var previewtext = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/Previewtext")
 
 onready var justify_text = 0
 onready var old_txt_len = len(self.text)
