@@ -20,7 +20,7 @@
 [sub_resource type="GDScript" id=1]
 script/source = "extends TextureRect
 
-onready var text_preview = get_child(0)
+onready var text_preview = get_node(\"Previewtext\")
 onready var font_size: int = get_node(\"/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer3/FontSize\").value
 
 func _ready():
@@ -39,7 +39,8 @@ func resize_self():
 func change_font_size(size: int):
 	# Change the font for the previewtext and/or set its size
 	font_size = size
-	text_preview.change_font_size(size)
+	var passed_size = (float(font_size)/100.0) * float(self.rect_size.y)
+	text_preview.change_font_size(passed_size)
 	resize_self()
 
 func _input(event):

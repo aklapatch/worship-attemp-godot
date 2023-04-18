@@ -20,8 +20,10 @@ func update_text(new_text):
 	
 # push the current font and the font size to the node we are updating
 func update_push_node(font: DynamicFont):
-	push_node.get_parent().change_font_size(font.size)
-	push_node.set("custom_fonts/normal_font", font)
+	# Copy the font to make sure it's separate from this nodes font
+	var font_copy = font.duplicate()
+	push_node.set("custom_fonts/normal_font", font_copy)
+	push_node.get_parent().change_font_size(get_parent().font_size)
 	
 # Load new font
 func load_font(font_name: String):
@@ -33,6 +35,7 @@ func load_font(font_name: String):
 	else:
 		new_font.size = get_parent().font_size
 	
+	new_font.use_mipmaps = true
 	# Grab the font size from the parent
 	self.set("custom_fonts/normal_font", new_font)
 	get_parent().change_font_size(new_font.size)

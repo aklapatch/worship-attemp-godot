@@ -22,11 +22,6 @@ func change_font_size(new_size: int):
 	resize_self()
 	
 func resize_self():
-	var curr_font = text_preview.get("custom_fonts/normal_font")
-	if curr_font != null:
-		curr_font.size = float(font_size)/100.0 * float(self.rect_size.y)
-		text_preview.set("custom_fonts/normal_font", curr_font)
-	
 	# change the vertical size to match the aspect ratio of the texture
 	# If there is no texture, then the texture will be null
 	if self.texture != null:
@@ -40,5 +35,10 @@ func resize_self():
 		self.rect_min_size.y = needed_height
 		
 		# resize the child too
-		var prev_text = get_child(0)
-		prev_text.rect_min_size.x = width
+		text_preview.rect_min_size.x = width
+		
+	var curr_font = text_preview.get("custom_fonts/normal_font")
+	if curr_font != null:
+		var new_size = int((float(font_size)/100.0) * float(self.rect_size.y))
+		curr_font.set_size(new_size)
+		text_preview.set("custom_fonts/normal_font", curr_font)
