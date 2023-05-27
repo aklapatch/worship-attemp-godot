@@ -14,7 +14,7 @@ func _ready():
 	self.size_flags_horizontal = SIZE_EXPAND_FILL | SIZE_SHRINK_CENTER
 	self.size_flags_vertical = SIZE_SHRINK_CENTER
 	self.scroll_active = false
-	self.fit_content_height = true
+	self.fit_content = true
 	num_lines = self.get_visible_line_count()
 	
 	# Grab the current font of the preview window and use that
@@ -27,14 +27,14 @@ func _process(delta):
 	if new_num_lines != num_lines:
 		num_lines = new_num_lines
 		
-		var font = self.get("theme_override_fonts/normal_font")
-		if font == null:
-			# Return if no valid font is set
+		var font_size = self.get_theme_font_size("normal_font_size")
+		if font_size == 1:
+			# Return if no valid font_size is set
 			return
 		# use the font size to get the size we are total
-		var tot_y = font.size * num_lines
+		var tot_y = font_size * num_lines
 		
-		# find the center of the parent vertically
+	h	# find the center of the parent vertically
 		var parent_y = self.get_parent_area_size().y
 		var parent_x = self.get_parent_area_size().x
 		var parent = self.get_parent()

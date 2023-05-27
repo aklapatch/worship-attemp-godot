@@ -20,33 +20,29 @@ func update_text(new_text):
 	
 # push the current font and the font size to the node we are updating
 func update_push_node(font: FontFile):
-	# Copy the font to make sure it's separate from this nodes font
-	var font_copy = font.duplicate()
-	push_node.set("theme_override_fonts/normal_font", font_copy)
+	push_node.add_theme_font_override("normal_font", font)
 	push_node.get_parent().change_font_size(get_parent().font_size)
 	
 # Load new font
 func load_font(font_name: String):
-	var new_font = FontFile.new()
-	new_font.font_data = load(font_name)
-	var curr_font = self.get("theme_override_fonts/normal_font")
-	if curr_font != null:
-		new_font.size = curr_font.size
-	else:
-		new_font.size = get_parent().font_size
+	var new_font = load(font_name)
+	var curr_font_size = self.get_theme_font_size("normal_font_size")
+	var new_font_size = curr_font_size
+	if new_font_size == 1:
+		# Grab the font size from the parent
+		new_font_size = get_parent().get_theme_font_size("normal_font_size")
 	
-	new_font.use_mipmaps = true
-	# Grab the font size from the parent
-	self.set("theme_override_fonts/normal_font", new_font)
-	get_parent().change_font_size(new_font.size)
+	self.add_theme_font_override("normal_font", new_font)
+	get_parent().change_font_size(new_font_size)
 	update_push_node(new_font)
 
 func change_font_size(font_size: int):
-	var curr_font = self.get("theme_override_fonts/normal_font")
-	if curr_font == null:
+	var curr_font_size = self.get_theme_font_size("normal_font")
+	if curr_font_size == 1:
 		return
-	curr_font.size = font_size
-	self.set("theme_override_fonts/normal_font", curr_font)
+	curr_font_size = font_size
+	self.add_theme_font_size_override("normal_font_size", font_size)
+	var curr_font = self.get_theme_font("normal_font_size")
 	update_push_node(curr_font)
 
 # Called when the node enters the scene tree for the first time.
@@ -62,10 +58,10 @@ func _process(delta):
 		
 		# use the font size to get the size we are total
 		# TODO: Update for a null custom font
-		var curr_font = self.get("theme_override_fonts/normal_font")
-		if curr_font == null:
+		var curr_font_size = self.get_theme_font_size("normal_font_size")
+		if curr_font_size == 1:
 			return
-		var tot_y = curr_font.size * num_lines
+		var tot_y = curr_font_size * num_lines
 		# find the center of the parent vertically
 		var parent_y = self.get_parent_area_size().y
 		var parent_x = self.get_parent_area_size().x

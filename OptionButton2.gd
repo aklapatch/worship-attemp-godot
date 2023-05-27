@@ -10,14 +10,11 @@ extends OptionButton
 @onready var res_fonts = []
 
 func load_font_names(path: String):
-	var dir = DirAccess.new()
+	var dir = DirAccess.open(path)
 	var err = dir.make_dir_recursive(path)
 	var output = []
 	if err != OK:
 		print("Error %u opening %s" % err, OK)
-		return
-	if dir.open(path) != OK:
-		print("Error opening " + path)
 		return
 		
 	var img_path = ProjectSettings.globalize_path(path)

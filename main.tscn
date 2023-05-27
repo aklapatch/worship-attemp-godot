@@ -1,23 +1,23 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=18 format=3 uid="uid://c31xclr0p2bsc"]
 
-[ext_resource path="res://cropped-car-landscape.jpg" type="Texture2D" id=1]
-[ext_resource path="res://add-photo-button.gd" type="Script" id=2]
-[ext_resource path="res://Label2.gd" type="Script" id=3]
-[ext_resource path="res://HFlowContainer2.gd" type="Script" id=4]
-[ext_resource path="res://newslidebutton.gd" type="Script" id=5]
-[ext_resource path="res://FontSize.gd" type="Script" id=6]
-[ext_resource path="res://edit_slide.gd" type="Script" id=7]
-[ext_resource path="res://slideTextEdit.gd" type="Script" id=8]
-[ext_resource path="res://OptionButton2.gd" type="Script" id=9]
-[ext_resource path="res://Previewtext.gd" type="Script" id=10]
-[ext_resource path="res://slidetext_preview.gd" type="Script" id=11]
-[ext_resource path="res://font-alignment.gd" type="Script" id=12]
-[ext_resource path="res://background_menu.gd" type="Script" id=13]
-[ext_resource path="res://pic_display_rect.gd" type="Script" id=14]
+[ext_resource type="Texture2D" uid="uid://c23j6o3jjhsbr" path="res://cropped-car-landscape.jpg" id="1"]
+[ext_resource type="Script" path="res://add-photo-button.gd" id="2"]
+[ext_resource type="Script" path="res://Label2.gd" id="3"]
+[ext_resource type="Script" path="res://HFlowContainer2.gd" id="4"]
+[ext_resource type="Script" path="res://newslidebutton.gd" id="5"]
+[ext_resource type="Script" path="res://FontSize.gd" id="6"]
+[ext_resource type="Script" path="res://edit_slide.gd" id="7"]
+[ext_resource type="Script" path="res://slideTextEdit.gd" id="8"]
+[ext_resource type="Script" path="res://OptionButton2.gd" id="9"]
+[ext_resource type="Script" path="res://Previewtext.gd" id="10"]
+[ext_resource type="Script" path="res://slidetext_preview.gd" id="11"]
+[ext_resource type="Script" path="res://font-alignment.gd" id="12"]
+[ext_resource type="Script" path="res://background_menu.gd" id="13"]
+[ext_resource type="Script" path="res://pic_display_rect.gd" id="14"]
 
-[sub_resource type="Theme" id=3]
+[sub_resource type="Theme" id="3"]
 
-[sub_resource type="GDScript" id=1]
+[sub_resource type="GDScript" id="1"]
 script/source = "extends TextureRect
 
 @onready var text_preview = get_node(\"Previewtext\")
@@ -31,10 +31,8 @@ func _ready():
 	
 func resize_self():
 	# Resize the font of the previewtext based on the size of us
-	var curr_font = text_preview.get(\"theme_override_fonts/normal_font\")
-	if curr_font != null:
-		curr_font.size = (float(font_size)/100.0) * float(self.size.y)
-		text_preview.set(\"theme_override_fonts/normal_font\", curr_font)
+	var new_size = (float(font_size)/100.0) * float(self.size.y)
+	text_preview.add_theme_font_size_override(\"normal_font\", new_size)
 		
 func change_font_size(size: int):
 	# Change the font for the previewtext and/or set its size
@@ -57,11 +55,13 @@ func _input(event):
 #	pass
 "
 
-[sub_resource type="RichTextEffect" id=4]
+[sub_resource type="RichTextEffect" id="4"]
 resource_local_to_scene = true
 resource_name = "RichTextVCenter"
 
 [node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 15.0
@@ -72,6 +72,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -10.0
@@ -80,312 +81,240 @@ offset_right = -15.0
 offset_bottom = -7.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-tab_alignment = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="TabContainer"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 4.0
-offset_top = 32.0
-offset_right = -4.0
-offset_bottom = -4.0
+layout_mode = 2
 
 [node name="HSplitContainer" type="HSplitContainer" parent="TabContainer/HBoxContainer"]
-offset_right = 1003.0
-offset_bottom = 558.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/HBoxContainer/HSplitContainer"]
-offset_right = 275.0
-offset_bottom = 558.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.39
 
 [node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer"]
-offset_right = 275.0
-offset_bottom = 20.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Button" type="Button" parent="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/HBoxContainer"]
-offset_right = 275.0
-offset_bottom = 20.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "New slide (+)"
-script = ExtResource( 5 )
+script = ExtResource("5")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer"]
-offset_top = 24.0
-offset_right = 275.0
-offset_bottom = 558.0
+layout_mode = 2
 size_flags_horizontal = 11
 size_flags_vertical = 11
-scroll_horizontal_enabled = false
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer"]
-offset_right = 275.0
-offset_bottom = 534.0
+layout_mode = 2
 size_flags_horizontal = 11
 size_flags_vertical = 11
 
 [node name="LineEdit" type="LineEdit" parent="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer"]
-offset_right = 275.0
-offset_bottom = 24.0
+layout_mode = 2
 size_flags_horizontal = 9
 size_flags_vertical = 9
 text = "1."
 
 [node name="TextureRect" type="TextureRect" parent="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer"]
-offset_top = 28.0
-offset_right = 275.0
-offset_bottom = 28.0
-texture = ExtResource( 1 )
-expand = true
+layout_mode = 2
+texture = ExtResource("1")
+expand_mode = 1
 stretch_mode = 5
-script = ExtResource( 14 )
+script = ExtResource("14")
 
 [node name="RichTextLabel" type="RichTextLabel" parent="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/TextureRect"]
+layout_mode = 0
 offset_top = 4.0
 offset_right = 40.0
 offset_bottom = 44.0
 size_flags_horizontal = 7
 size_flags_vertical = 0
 bbcode_enabled = true
-script = ExtResource( 11 )
+script = ExtResource("11")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer"]
-offset_top = 32.0
-offset_right = 275.0
-offset_bottom = 52.0
+layout_mode = 2
 
 [node name="show_slide" type="Button" parent="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/HBoxContainer"]
-offset_right = 89.0
-offset_bottom = 20.0
+layout_mode = 2
 size_flags_horizontal = 3
 text = "Show"
 
 [node name="edit_slide" type="Button" parent="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/HBoxContainer"]
-offset_left = 93.0
-offset_right = 182.0
-offset_bottom = 20.0
+layout_mode = 2
 size_flags_horizontal = 3
 text = "Edit"
-script = ExtResource( 7 )
+script = ExtResource("7")
 
 [node name="delete_button" type="Button" parent="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/HBoxContainer"]
-offset_left = 186.0
-offset_right = 275.0
-offset_bottom = 20.0
+layout_mode = 2
 size_flags_horizontal = 3
 text = "Delete"
 
 [node name="VSplitContainer" type="VSplitContainer" parent="TabContainer/HBoxContainer/HSplitContainer"]
-offset_left = 287.0
-offset_right = 1003.0
-offset_bottom = 558.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Preview" type="TextureRect" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer"]
-offset_right = 716.0
-offset_bottom = 273.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme = SubResource( 3 )
-texture = ExtResource( 1 )
-expand = true
+theme = SubResource("3")
+texture = ExtResource("1")
+expand_mode = 1
 stretch_mode = 6
-script = SubResource( 1 )
+script = SubResource("1")
 
 [node name="Previewtext" type="RichTextLabel" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview"]
+layout_mode = 0
 offset_left = 124.0
 offset_top = 128.0
 offset_right = 613.0
 offset_bottom = 143.0
-focus_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+focus_mode = 2
 bbcode_enabled = true
-fit_content_height = true
 scroll_active = false
+custom_effects = [SubResource("4")]
 selection_enabled = true
-custom_effects = [ SubResource( 4 ) ]
-script = ExtResource( 10 )
-__meta__ = {
-"_editor_description_": ""
-}
+script = ExtResource("10")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer"]
-offset_top = 285.0
-offset_right = 716.0
-offset_bottom = 558.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer"]
-offset_right = 716.0
-offset_bottom = 273.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="TextEdit" type="TextEdit" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer"]
-offset_right = 583.0
-offset_bottom = 273.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-script = ExtResource( 8 )
+script = ExtResource("8")
 
 [node name="HFlowContainer" type="HFlowContainer" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer"]
-offset_left = 587.0
-offset_right = 716.0
-offset_bottom = 273.0
-theme_override_constants/v_separation = 20
+layout_mode = 2
 theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer"]
-offset_right = 129.0
-offset_bottom = 38.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Label" type="Label" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer2"]
-offset_right = 129.0
-offset_bottom = 14.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 7
 text = "Text alignment"
 
 [node name="OptionButton2" type="OptionButton" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer2"]
-offset_top = 18.0
-offset_right = 129.0
-offset_bottom = 38.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "Text alignment"
-script = ExtResource( 12 )
+script = ExtResource("12")
 
 [node name="VBoxContainer3" type="VBoxContainer" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer"]
-offset_top = 58.0
-offset_right = 129.0
-offset_bottom = 100.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Label2" type="Label" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer3"]
-offset_right = 129.0
-offset_bottom = 14.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 7
 text = "Font Size (%)"
 
 [node name="FontSize" type="SpinBox" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer3"]
-offset_top = 18.0
-offset_right = 129.0
-offset_bottom = 42.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 min_value = 2.0
 step = 2.0
 value = 12.0
 rounded = true
-script = ExtResource( 6 )
+script = ExtResource("6")
 
 [node name="VBoxContainer4" type="VBoxContainer" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer"]
-offset_top = 120.0
-offset_right = 129.0
-offset_bottom = 158.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Label2" type="Label" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer4"]
-offset_right = 129.0
-offset_bottom = 14.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 7
 text = "Font"
 
 [node name="OptionButton2" type="OptionButton" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer4"]
-offset_top = 18.0
-offset_right = 129.0
-offset_bottom = 38.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "<default>"
-script = ExtResource( 9 )
+script = ExtResource("9")
 
 [node name="VBoxContainer5" type="VBoxContainer" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer"]
-offset_top = 178.0
-offset_right = 129.0
-offset_bottom = 198.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="MenuButton" type="MenuButton" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer5"]
-offset_right = 129.0
-offset_bottom = 20.0
+layout_mode = 2
 text = "Select Background"
-script = ExtResource( 13 )
+script = ExtResource("13")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TabContainer"]
 visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 4.0
-offset_top = 32.0
-offset_right = -4.0
-offset_bottom = -4.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="HFlowContainer" type="HFlowContainer" parent="TabContainer/VBoxContainer"]
-offset_right = 1003.0
-offset_bottom = 20.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="TabContainer/VBoxContainer/HFlowContainer"]
-offset_top = 3.0
-offset_right = 37.0
-offset_bottom = 17.0
+layout_mode = 2
 text = "Zoom"
 
 [node name="Label2" type="Label" parent="TabContainer/VBoxContainer/HFlowContainer"]
-offset_left = 41.0
-offset_top = 3.0
-offset_right = 57.0
-offset_bottom = 17.0
+layout_mode = 2
 text = "    "
-script = ExtResource( 3 )
+script = ExtResource("3")
 
 [node name="HSlider" type="HSlider" parent="TabContainer/VBoxContainer/HFlowContainer"]
-offset_left = 61.0
-offset_right = 918.0
-offset_bottom = 16.0
+layout_mode = 2
 size_flags_horizontal = 3
 min_value = 100.0
 max_value = 500.0
 value = 250.0
 
 [node name="Button" type="Button" parent="TabContainer/VBoxContainer/HFlowContainer"]
-offset_left = 922.0
-offset_right = 1003.0
-offset_bottom = 20.0
+layout_mode = 2
 text = "Add Image"
-script = ExtResource( 2 )
+script = ExtResource("2")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/VBoxContainer"]
-offset_top = 24.0
-offset_right = 1003.0
-offset_bottom = 558.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="HFlowContainer2" type="HFlowContainer" parent="TabContainer/VBoxContainer/ScrollContainer"]
-offset_right = 1003.0
-offset_bottom = 534.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/v_separation = 20
 theme_override_constants/h_separation = 10
-script = ExtResource( 4 )
+theme_override_constants/v_separation = 20
+script = ExtResource("4")

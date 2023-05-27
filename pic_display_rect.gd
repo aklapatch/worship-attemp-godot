@@ -40,5 +40,4 @@ func resize_self():
 	var curr_font = text_preview.get("theme_override_fonts/normal_font")
 	if curr_font != null:
 		var new_size = int((float(font_size)/100.0) * float(self.size.y))
-		curr_font.set_size(new_size)
-		text_preview.set("theme_override_fonts/normal_font", curr_font)
+		text_preview.add_theme_font_size_override("normal_font", new_size)

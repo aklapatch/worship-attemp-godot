@@ -9,9 +9,8 @@ func exec_script(ps_script : Array) -> int:
 		ps_concat += line + '\n'
 	ps_concat += "}"
 
-	var output = []
 	print(ps_concat)
-	return OS.execute("powershell.exe", ["-Command", ps_concat], true, output)
+	return OS.execute("powershell.exe", ["-Command", ps_concat])
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

@@ -5,14 +5,11 @@ extends MenuButton
 
 func send_img_to_preview(index: int):
 	var item_tex = self.get_popup().get_item_icon(index)
-	var orig_tex = ImageTexture.new()
-	orig_tex.create_from_image(item_tex.get_data())
+	var orig_tex = item_tex.duplicate()
 	prev_tex_node.set_texture(orig_tex)
 	# set the push node too
 	assert(prev_text_node != null)
 	prev_text_node.push_node.get_parent().set_texture(orig_tex)
-	
-	pass
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -22,10 +19,9 @@ func _ready():
 	pass # Replace with function body.
 
 func add_pic_item(texture: ImageTexture, label: String):
-	# Set the texture to the right size
-	var img_tex = ImageTexture.new()
-	# use this to make a copy of the image
-	img_tex.create_from_image(texture.get_data())
+	# Set the texture to the right size after copying it
+	var img_tex = texture.duplicate()
+	
 	var img_w = img_tex.get_width()
 	var img_h = img_tex.get_height()
 
@@ -36,8 +32,8 @@ func add_pic_item(texture: ImageTexture, label: String):
 	var new_h = 100 if bigger_h else float(img_h)*scale_factor
 	var new_w = 100 if not bigger_h else float(img_w)*scale_factor
 	
-	var new_size = Vector2(new_w, new_h)
-	img_tex.set_size_2d_override(new_size)
+	var new_size = Vector2i(new_w, new_h)
+	img_tex.set_size_override(new_size)
 	self.get_popup().add_icon_item(img_tex, label)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
