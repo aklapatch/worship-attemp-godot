@@ -5,7 +5,7 @@ extends Label
 # var a = 2
 # var b = "text"
 
-onready var zoomslider: HSlider = get_node("../HSlider")
+@onready var zoomslider: HSlider = get_node("../HSlider")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

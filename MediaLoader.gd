@@ -5,13 +5,13 @@ extends GridContainer
 # var a = 2
 # var b = "text"
 
-onready var pics_found = []
+@onready var pics_found = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# load pictures and add them to this node
 	# load from the ~/Pictures dir on windows
-	var dir = Directory.new()
+	var dir = DirAccess.new()
 	var path = "user://images/"
 	var err = dir.make_dir_recursive(path)
 	if err != OK:
@@ -26,7 +26,7 @@ func _ready():
 	print("img path " + img_path)
 	#OS.shell_open(img_path)
 		
-	dir.list_dir_begin()
+	dir.list_dir_begin() # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 	var file_name = dir.get_next()
 	while file_name != "":
 		if dir.current_is_dir():

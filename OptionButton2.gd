@@ -5,12 +5,12 @@ extends OptionButton
 # var b = "text"
 
 #onready var preview_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/ViewportContainer/Viewport/Control/Previewtext")
-onready var preview_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/Previewtext")
-onready var usr_fonts = []
-onready var res_fonts = []
+@onready var preview_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/Previewtext")
+@onready var usr_fonts = []
+@onready var res_fonts = []
 
 func load_font_names(path: String):
-	var dir = Directory.new()
+	var dir = DirAccess.new()
 	var err = dir.make_dir_recursive(path)
 	var output = []
 	if err != OK:
@@ -22,7 +22,7 @@ func load_font_names(path: String):
 		
 	var img_path = ProjectSettings.globalize_path(path)
 		
-	dir.list_dir_begin()
+	dir.list_dir_begin() # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 	var file_name = dir.get_next()
 	while file_name != "":
 		if not dir.current_is_dir():
@@ -60,7 +60,7 @@ func _ready():
 	# Tell the 
 	preview_node.get_parent().resize_self()
 	
-	self.connect("item_selected", self, "item_changed")
+	self.connect("item_selected", Callable(self, "item_changed"))
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

@@ -1,7 +1,7 @@
 extends MenuButton
 
-onready var prev_tex_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview")
-onready var prev_text_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/Previewtext")
+@onready var prev_tex_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview")
+@onready var prev_text_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/Previewtext")
 
 func send_img_to_preview(index: int):
 	var item_tex = self.get_popup().get_item_icon(index)
@@ -18,7 +18,7 @@ func send_img_to_preview(index: int):
 func _ready():
 	self.get_popup().hide_on_item_selection = true
 	self.get_popup()
-	self.get_popup().connect("index_pressed", self, "send_img_to_preview")
+	self.get_popup().connect("index_pressed", Callable(self, "send_img_to_preview"))
 	pass # Replace with function body.
 
 func add_pic_item(texture: ImageTexture, label: String):
@@ -37,7 +37,7 @@ func add_pic_item(texture: ImageTexture, label: String):
 	var new_w = 100 if not bigger_h else float(img_w)*scale_factor
 	
 	var new_size = Vector2(new_w, new_h)
-	img_tex.set_size_override(new_size)
+	img_tex.set_size_2d_override(new_size)
 	self.get_popup().add_icon_item(img_tex, label)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

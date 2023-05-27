@@ -4,14 +4,14 @@ extends Button
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
-onready var pic_script = load("res://pic_display_rect.gd")
-onready var preview_text_script = load("res://slidetext_preview.gd")
-onready var edit_button_script = load("res://edit_slide.gd")
-onready var item_list = get_node("../../ScrollContainer/VBoxContainer")
+@onready var pic_script = load("res://pic_display_rect.gd")
+@onready var preview_text_script = load("res://slidetext_preview.gd")
+@onready var edit_button_script = load("res://edit_slide.gd")
+@onready var item_list = get_node("../../ScrollContainer/VBoxContainer")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	self.connect("pressed", self, "make_new_slide")
+	self.connect("pressed", Callable(self, "make_new_slide"))
 	pass # Replace with function body.
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.

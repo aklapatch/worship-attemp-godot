@@ -1,10 +1,10 @@
 extends TextEdit
 
 #onready var previewtext = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/ViewportContainer/Viewport/Control/Previewtext")
-onready var previewtext = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/Previewtext")
+@onready var previewtext = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/Previewtext")
 
-onready var justify_text = 0
-onready var old_txt_len = len(self.text)
+@onready var justify_text = 0
+@onready var old_txt_len = len(self.text)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -25,7 +25,7 @@ func set_just_push_text(just_val):
 # reach out to the preview text and update it when we have changed
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 # warning-ignore:unused_argument
-onready var set_to_zero = false
+@onready var set_to_zero = false
 func _process(delta):
 	var new_len = len(self.text)
 	if new_len != old_txt_len:

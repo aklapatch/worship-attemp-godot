@@ -5,31 +5,31 @@ extends RichTextLabel
 # var b = "text"
 
 # TODO: see if this is needed for font caching. Doesn't seem necessary now.
-onready var font_dict = {}
-onready var num_lines = 0
+@onready var font_dict = {}
+@onready var num_lines = 0
 
 # When the text changes in this node, push the font size, type, and the text
 # Default to the first node in the slide list
 # TODO: how to handle deleted nodes?
-onready var push_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/TextureRect/RichTextLabel")
+@onready var push_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/TextureRect/RichTextLabel")
 # When a slide is selected, it should push itself to this node
 	
 func update_text(new_text):
-	self.bbcode_text = new_text
-	push_node.bbcode_text = new_text
+	self.text = new_text
+	push_node.text = new_text
 	
 # push the current font and the font size to the node we are updating
-func update_push_node(font: DynamicFont):
+func update_push_node(font: FontFile):
 	# Copy the font to make sure it's separate from this nodes font
 	var font_copy = font.duplicate()
-	push_node.set("custom_fonts/normal_font", font_copy)
+	push_node.set("theme_override_fonts/normal_font", font_copy)
 	push_node.get_parent().change_font_size(get_parent().font_size)
 	
 # Load new font
 func load_font(font_name: String):
-	var new_font = DynamicFont.new()
+	var new_font = FontFile.new()
 	new_font.font_data = load(font_name)
-	var curr_font = self.get("custom_fonts/normal_font")
+	var curr_font = self.get("theme_override_fonts/normal_font")
 	if curr_font != null:
 		new_font.size = curr_font.size
 	else:
@@ -37,16 +37,16 @@ func load_font(font_name: String):
 	
 	new_font.use_mipmaps = true
 	# Grab the font size from the parent
-	self.set("custom_fonts/normal_font", new_font)
+	self.set("theme_override_fonts/normal_font", new_font)
 	get_parent().change_font_size(new_font.size)
 	update_push_node(new_font)
 
 func change_font_size(font_size: int):
-	var curr_font = self.get("custom_fonts/normal_font")
+	var curr_font = self.get("theme_override_fonts/normal_font")
 	if curr_font == null:
 		return
 	curr_font.size = font_size
-	self.set("custom_fonts/normal_font", curr_font)
+	self.set("theme_override_fonts/normal_font", curr_font)
 	update_push_node(curr_font)
 
 # Called when the node enters the scene tree for the first time.
@@ -62,7 +62,7 @@ func _process(delta):
 		
 		# use the font size to get the size we are total
 		# TODO: Update for a null custom font
-		var curr_font = self.get("custom_fonts/normal_font")
+		var curr_font = self.get("theme_override_fonts/normal_font")
 		if curr_font == null:
 			return
 		var tot_y = curr_font.size * num_lines
@@ -74,4 +74,4 @@ func _process(delta):
 		var par_center = parent_y/2
 		
 		var move_here = par_center - tot_y/2
-		self.rect_position.y  = move_here
+		self.position.y  = move_here

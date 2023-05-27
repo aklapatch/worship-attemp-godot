@@ -4,8 +4,8 @@ extends RichTextLabel
 # var a = 2
 # var b = "text"
 
-onready var num_lines = 0
-onready var prev_text = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/Previewtext")
+@onready var num_lines = 0
+@onready var prev_text = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/Previewtext")
 #onready var prev_text = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/ViewportContainer/Viewport/Control/Previewtext")
 
 # Called when the node enters the scene tree for the first time.
@@ -18,16 +18,16 @@ func _ready():
 	num_lines = self.get_visible_line_count()
 	
 	# Grab the current font of the preview window and use that
-	var font = prev_text.get("custom_fonts/normal_font")
+	var font = prev_text.get("theme_override_fonts/normal_font")
 	if font != null:
-		self.set("custom_fonts/normal_font", font)
+		self.set("theme_override_fonts/normal_font", font)
 
 func _process(delta):
 	var new_num_lines = self.get_visible_line_count()
 	if new_num_lines != num_lines:
 		num_lines = new_num_lines
 		
-		var font = self.get("custom_fonts/normal_font")
+		var font = self.get("theme_override_fonts/normal_font")
 		if font == null:
 			# Return if no valid font is set
 			return
@@ -42,4 +42,4 @@ func _process(delta):
 		var par_center = parent_y/2
 		
 		var move_here = par_center - tot_y/2
-		self.rect_position.y  = move_here
+		self.position.y  = move_here

@@ -9,7 +9,7 @@ func _ready():
 	# set the size based on the texture
 	resize_self()
 	
-	self.connect("item_rect_changed", self, "resize_self")
+	self.connect("item_rect_changed", Callable(self, "resize_self"))
 	# TODO: add code to grab the text from the nested RightText label and push it to the preview
 	
 func resize_self():
@@ -18,15 +18,15 @@ func resize_self():
 	if self.texture_normal != null:
 		var size = self.texture_normal.get_size()
 		var aspect_ratio = size.y/size.x
-		var width = self.rect_size.x
+		var width = self.size.x
 		var needed_height = int(width*aspect_ratio)
 	
-		self.rect_min_size.y = needed_height
+		self.custom_minimum_size.y = needed_height
 		
 		# resize the child too
 		var prev_text = get_child(0)
-		prev_text.rect_min_size.y = needed_height
-		prev_text.rect_min_size.x = width
+		prev_text.custom_minimum_size.y = needed_height
+		prev_text.custom_minimum_size.x = width
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

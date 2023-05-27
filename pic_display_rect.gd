@@ -4,8 +4,8 @@ extends TextureRect
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"\
-onready var text_preview = get_child(0)
-onready var font_size: int = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer3/FontSize").value
+@onready var text_preview = get_child(0)
+@onready var font_size: int = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer3/FontSize").value
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -14,7 +14,7 @@ func _ready():
 	# set the size based on the texture
 	resize_self()
 	
-	self.connect("item_rect_changed", self, "resize_self")
+	self.connect("item_rect_changed", Callable(self, "resize_self"))
 	# TODO: add code to grab the text from the nested RightText label and push it to the preview
 	
 func change_font_size(new_size: int):
@@ -29,16 +29,16 @@ func resize_self():
 		if size.y == 0 or size.x == 0:
 			return
 		var aspect_ratio = size.y/size.x
-		var width = self.rect_size.x
+		var width = self.size.x
 		var needed_height = int(width*aspect_ratio)
 	
-		self.rect_min_size.y = needed_height
+		self.custom_minimum_size.y = needed_height
 		
 		# resize the child too
-		text_preview.rect_min_size.x = width
+		text_preview.custom_minimum_size.x = width
 		
-	var curr_font = text_preview.get("custom_fonts/normal_font")
+	var curr_font = text_preview.get("theme_override_fonts/normal_font")
 	if curr_font != null:
-		var new_size = int((float(font_size)/100.0) * float(self.rect_size.y))
+		var new_size = int((float(font_size)/100.0) * float(self.size.y))
 		curr_font.set_size(new_size)
-		text_preview.set("custom_fonts/normal_font", curr_font)
+		text_preview.set("theme_override_fonts/normal_font", curr_font)

@@ -5,13 +5,13 @@ extends HFlowContainer
 # var b = "text"
 
 # Called when the node enters the scene tree for the first time.
-onready var pics_found = []
+@onready var pics_found = []
 # TODO: have the zoom slider set the value for this node
-onready var zoom_slider = get_node('../../HFlowContainer/HSlider')
-onready var zoom_slider_val = zoom_slider.value
+@onready var zoom_slider = get_node('../../HFlowContainer/HSlider')
+@onready var zoom_slider_val = zoom_slider.value
 
 func load_pics(path: String):
-	var dir = Directory.new()
+	var dir = DirAccess.new()
 	var err = dir.make_dir_recursive(path)
 	if err != OK:
 		print("Error %u opening %s" % err, OK)
@@ -22,7 +22,7 @@ func load_pics(path: String):
 		
 	var img_path = ProjectSettings.globalize_path(path)
 		
-	dir.list_dir_begin()
+	dir.list_dir_begin() # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 	var file_name = dir.get_next()
 	while file_name != "":
 		if dir.current_is_dir():
@@ -35,7 +35,7 @@ func load_pics(path: String):
 			var child_name = "picture" + file_name.replace(".", "")
 			print(child_name)
 			
-			var dup = self.find_node(container_name, true, false)
+			var dup = self.find_child(container_name, true, false)
 			if dup != null:
 				file_name = dir.get_next()
 				continue
@@ -74,7 +74,7 @@ func load_pics(path: String):
 				
 		file_name = dir.get_next()
 
-onready var back_sel = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer5/MenuButton")
+@onready var back_sel = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer5/MenuButton")
 func load_self_pics():
 	load_pics("user://images/")
 	back_sel.get_popup().clear()
@@ -86,7 +86,7 @@ func load_self_pics():
 func _ready():
 	load_self_pics()
 	var add_pic_button = get_node("../../HFlowContainer/Button")
-	add_pic_button.connect("added_img", self, "load_self_pics")
+	add_pic_button.connect("added_img", Callable(self, "load_self_pics"))
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -97,7 +97,7 @@ func _process(delta):
 			# preserve the aspect ratio from the old pic
 			# find the picture and set its size
 			
-			var ratio = child.rect_size.x/child.rect_size.y
+			var ratio = child.size.x/child.size.y
 			var size = Vector2(zoom_slider_val*ratio, zoom_slider_val)
 			child.set_custom_minimum_size(size)
 			

@@ -15,7 +15,7 @@ func exec_script(ps_script : Array) -> int:
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	self.connect("pressed", self, "_button_pressed")
+	self.connect("pressed", Callable(self, "_button_pressed"))
 	self.add_user_signal("added_img")
 
 func _button_pressed():

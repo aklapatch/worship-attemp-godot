@@ -5,9 +5,9 @@ extends Button
 # var a = 2
 # var b = "text"
 
-onready var preview_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview")
-onready var preview_text_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/Previewtext")
-onready var text_edit_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit")
+@onready var preview_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview")
+@onready var preview_text_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/Previewtext")
+@onready var text_edit_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit")
 
 func strip_bbcode(source:String) -> String:
 	var regex = RegEx.new()
@@ -16,7 +16,7 @@ func strip_bbcode(source:String) -> String:
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	self.connect("pressed", self, "push_edit_slide")
+	self.connect("pressed", Callable(self, "push_edit_slide"))
 
 func push_edit_slide():
 	# Grab the node behind us with text and textures
@@ -29,13 +29,13 @@ func push_edit_slide():
 	# Push the properties of this node to the preview node (font, texture, etc.)
 	preview_node.texture = text_rect.texture
 	
-	preview_text_node.bbcode_text = text_show_rect.bbcode_text
+	preview_text_node.text = text_show_rect.text
 	# update the text edit node too
-	text_edit_node.text = strip_bbcode(text_show_rect.bbcode_text)
+	text_edit_node.text = strip_bbcode(text_show_rect.text)
 	
 	# TODO: update the font sliders and font size button
 	# TODO: If the font is null, then inherit from the font size and font options
-	var slide_font = text_show_rect.get("custom_fonts/normal_font")
+	var slide_font = text_show_rect.get("theme_override_fonts/normal_font")
 	if slide_font != null:
-		preview_text_node.set("custom_fonts/normal_font", slide_font)
+		preview_text_node.set("theme_override_fonts/normal_font", slide_font)
 	preview_text_node.push_node = text_show_rect
