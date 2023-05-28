@@ -16,7 +16,6 @@ func _ready():
 	self.get_popup().hide_on_item_selection = true
 	self.get_popup()
 	self.get_popup().connect("index_pressed", Callable(self, "send_img_to_preview"))
-	pass # Replace with function body.
 
 func add_pic_item(texture: ImageTexture, label: String):
 	# Set the texture to the right size after copying it

@@ -1,3 +1,4 @@
+@tool
 extends HFlowContainer
 
 # Declare member variables here. Examples:
@@ -19,7 +20,9 @@ func load_pics(path: String):
 		
 	var img_path = ProjectSettings.globalize_path(path)
 		
-	dir.list_dir_begin() # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
+	var dir_err = dir.list_dir_begin() # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
+	assert(dir_err == OK, "Dir opening failed")
+	
 	var file_name = dir.get_next()
 	while file_name != "":
 		if dir.current_is_dir():
@@ -38,10 +41,11 @@ func load_pics(path: String):
 				continue
 				
 			if file_name.ends_with('png') or file_name.ends_with('jpg'):
-				var img = Image.new()
-				img.load(file_path)
-				var texture = ImageTexture.new()
-				texture.create_from_image(img)
+				var rel_img_path = "user://images/" + file_name
+				var img = Image.load_from_file(rel_img_path)
+				print(img)
+				assert(img != null, "ERROR: ")
+				var texture = ImageTexture.create_from_image(img)
 				
 				# insert the picture into the textureRect
 				var child = TextureRect.new()

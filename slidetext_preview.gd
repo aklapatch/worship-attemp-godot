@@ -34,7 +34,7 @@ func _process(delta):
 		# use the font size to get the size we are total
 		var tot_y = font_size * num_lines
 		
-	h	# find the center of the parent vertically
+		# find the center of the parent vertically
 		var parent_y = self.get_parent_area_size().y
 		var parent_x = self.get_parent_area_size().x
 		var parent = self.get_parent()
