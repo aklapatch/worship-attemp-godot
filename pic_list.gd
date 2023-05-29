@@ -1,5 +1,5 @@
 @tool
-extends HFlowContainer
+extends ItemList
 
 # Declare member variables here. Examples:
 # var a = 2
@@ -7,7 +7,7 @@ extends HFlowContainer
 
 # Called when the node enters the scene tree for the first time.
 @onready var pics_found = []
-# TODO: have the zoom slider set the value for this node
+# TODO: have the zoom slider emit a signal for the value change
 @onready var zoom_slider = get_node('../../HFlowContainer/HSlider')
 @onready var zoom_slider_val = zoom_slider.value
 
@@ -29,48 +29,24 @@ func load_pics(path: String):
 			print("Found directory: " + file_name)
 		else:
 			var file_path = img_path + file_name
-			# only load the image if we don't have it loaded
-			# the node names strip the '.' for some reason
-			var container_name = "container" + file_name.replace(".","")
-			var child_name = "picture" + file_name.replace(".", "")
-			print(child_name)
 			
-			var dup = self.find_child(container_name, true, false)
-			if dup != null:
-				file_name = dir.get_next()
-				continue
+			# Don't reload duplicate images
+			for i in range(0, self.item_count):
+				var item_text = self.get_item_text(i)
+				if item_text == file_name:
+					file_name = dir.get_next()
 				
 			if file_name.ends_with('png') or file_name.ends_with('jpg'):
-				var rel_img_path = "user://images/" + file_name
-				var img = Image.load_from_file(rel_img_path)
-				assert(img != null, "ERROR loading " + rel_img_path)
+				var img = Image.load_from_file(file_path)
+				assert(img != null, "ERROR loading " + file_path)
 				var texture = ImageTexture.create_from_image(img)
-				
-				# insert the picture into the textureRect
-				var child = TextureRect.new()
+			
 				var pic_size = texture.get_size()
 	
 				var aspect_ratio = pic_size.x/pic_size.y
 				var size = Vector2(zoom_slider.value*aspect_ratio, zoom_slider.value)
-		
-				child.name = child_name
-				child.expand = true
-				child.set_stretch_mode(TextureRect.STRETCH_KEEP_ASPECT)
-				child.set_texture(texture)
-				child.set_custom_minimum_size(size)
-				child.add_to_group("media pics")
-		
-				var child_container = VBoxContainer.new()
-				child_container.name = container_name
 				
-				var img_label = Label.new()
-				img_label.text = file_name
-				img_label.set_clip_text(true)
-
-				child_container.add_child(img_label)
-				child_container.add_child(child)
-				
-				self.add_child(child_container)
+				self.add_item(file_name, texture)
 				
 		file_name = dir.get_next()
 
@@ -79,6 +55,7 @@ func load_self_pics():
 	load_pics("user://images/")
 	back_sel.get_popup().clear()
 	# Set the contents of the image select menu button
+	# TODO: Add a bit that udpate 
 	for child in get_tree().get_nodes_in_group("media pics"):
 		back_sel.add_pic_item(child.get_texture(), "test")
 
