@@ -4,7 +4,6 @@ extends ItemList
 # var a = 2
 # var b = "text"
 
-# TODO: have the zoom slider emit a signal for the value change
 @onready var zoom_slider = get_node('../../HFlowContainer/HSlider')
 
 func load_pics(path: String):
