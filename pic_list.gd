@@ -1,15 +1,11 @@
-@tool
 extends ItemList
 
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
 
-# Called when the node enters the scene tree for the first time.
-@onready var pics_found = []
 # TODO: have the zoom slider emit a signal for the value change
 @onready var zoom_slider = get_node('../../HFlowContainer/HSlider')
-@onready var zoom_slider_val = zoom_slider.value
 
 func load_pics(path: String):
 	var dir = DirAccess.open(path)
@@ -31,20 +27,19 @@ func load_pics(path: String):
 			var file_path = img_path + file_name
 			
 			# Don't reload duplicate images
+			var item_text = ""
 			for i in range(0, self.item_count):
-				var item_text = self.get_item_text(i)
+				item_text = self.get_item_text(i)
 				if item_text == file_name:
-					file_name = dir.get_next()
+					break
+			if item_text == file_name:
+				file_name = dir.get_next()
+				continue
 				
 			if file_name.ends_with('png') or file_name.ends_with('jpg'):
 				var img = Image.load_from_file(file_path)
 				assert(img != null, "ERROR loading " + file_path)
 				var texture = ImageTexture.create_from_image(img)
-			
-				var pic_size = texture.get_size()
-	
-				var aspect_ratio = pic_size.x/pic_size.y
-				var size = Vector2(zoom_slider.value*aspect_ratio, zoom_slider.value)
 				
 				self.add_item(file_name, texture)
 				
@@ -64,18 +59,11 @@ func _ready():
 	load_self_pics()
 	var add_pic_button = get_node("../../HFlowContainer/Button")
 	add_pic_button.connect("added_img", Callable(self, "load_self_pics"))
+	assert(zoom_slider.value_changed.connect(update_icon_scale) == OK, "ERROR connecting signal")
+	update_icon_scale(zoom_slider.value)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	if zoom_slider.value != zoom_slider_val:
-		zoom_slider_val = zoom_slider.value
-		# go through all the children and set their new size
-		for child in get_tree().get_nodes_in_group("media pics"):
-			# preserve the aspect ratio from the old pic
-			# find the picture and set its size
-			
-			var ratio = child.size.x/child.size.y
-			var size = Vector2(zoom_slider_val*ratio, zoom_slider_val)
-			child.set_custom_minimum_size(size)
-			
+func update_icon_scale(val: float):
+	var int_val = int(val)
+	self.fixed_icon_size = Vector2i(int_val, int_val)
+	self.queue_redraw()
 

@@ -9,11 +9,9 @@ extends Label
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	self.set_text("%.1f" % zoomslider.value)
+	var connect_ret = zoomslider.value_changed.connect(match_slider_val)
+	assert(connect_ret == OK, "ERROR: %d connecting signal" % connect_ret)
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	# grab the value of the slider and print it here
-	self.set_text("%d" % int(zoomslider.value))
-	
+func match_slider_val(val: float):
+	self.set_text("%.1f" % val)
