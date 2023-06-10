@@ -4,8 +4,6 @@ extends OptionButton
 # var a = 2
 # var b = "text"
 
-#onready var preview_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/ViewportContainer/Viewport/Control/Previewtext")
-@onready var preview_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/Previewtext")
 @onready var usr_fonts = []
 @onready var res_fonts = []
 
@@ -31,31 +29,18 @@ func load_font_names(path: String):
 		file_name = dir.get_next()
 	return output
 
-func item_changed(new_index):
-	# Forward the name of this item to the previewtext
-	var font_name = self.get_item_text(new_index)
-	
-	if res_fonts.has(font_name):
-		preview_node.load_font("res://" + font_name)
-	elif usr_fonts.has(font_name):
-		preview_node.load_font("user://fonts/" + font_name)
-	else:
-		print("Error loading font!")
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	res_fonts = load_font_names("res://")
 	usr_fonts = load_font_names("user://fonts/")
 	
+	var preview_node = get_node("../../../../../AspectRatioContainer/Preview/Previewtext")
 	preview_node.load_font("res://" + res_fonts[0])
 	for item in res_fonts:
 		self.add_item(item)
 	
 	for font in usr_fonts:
 		self.add_item(font)
-		
-	# Tell the 
-	preview_node.get_parent().resize_self()
 	
 	self.connect("item_selected", Callable(self, "item_changed"))
 	

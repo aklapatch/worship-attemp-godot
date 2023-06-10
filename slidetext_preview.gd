@@ -5,8 +5,7 @@ extends RichTextLabel
 # var b = "text"
 
 @onready var num_lines = 0
-@onready var prev_text = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/Previewtext")
-#onready var prev_text = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/Preview/ViewportContainer/Viewport/Control/Previewtext")
+@onready var prev_text = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/Preview/Previewtext")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
