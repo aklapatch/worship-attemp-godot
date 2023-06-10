@@ -12,13 +12,14 @@ extends RichTextLabel
 # When the text changes in this node, push the font size, type, and the text
 # Default to the first node in the slide list
 # TODO: how to handle deleted nodes?
-@onready var push_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/TextureRect/RichTextLabel")
+@onready var slides = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/Preview/Previewtext")
 @onready var font_select = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer4/OptionButton2")
 # When a slide is selected, it should push itself to this node
 	
 # push the current font and the font size to the node we are updating
 func update_push_node(font: FontFile):
-	push_node.add_theme_font_override("normal_font", font)
+	#push_node.add_theme_font_override("normal_font", font)
+	pass
 	
 # Load new font
 func load_font(font_name: String):
@@ -34,7 +35,6 @@ func load_font(font_name: String):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	assert(push_node != null)
 	num_lines = self.get_visible_line_count()
 
 # Move and resize this child so it fits in the parents texture
@@ -51,7 +51,6 @@ func _on_text_edit_text_changed():
 	# TODO: Save/grab the alignment too
 	var new_text: String = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit").text
 	self.text = new_text
-	push_node.text = new_text
 	center_self()
 
 func _on_font_size_value_changed(new_font_size: float):
