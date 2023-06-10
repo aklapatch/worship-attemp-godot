@@ -13,7 +13,12 @@ extends RichTextLabel
 # Default to the first node in the slide list
 # TODO: how to handle deleted nodes?
 @onready var slides = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/Preview/Previewtext")
-@onready var font_select = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer4/OptionButton2")
+@onready var font_select = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer4/font_select")
+@onready var align_select = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer2/align_select")
+
+# This needs to be synced with the text alignment button
+@onready var align_tag_map = {0 : "center", 1: "left", 2: "right"}
+@onready var align_id = align_select.selected
 # When a slide is selected, it should push itself to this node
 	
 # push the current font and the font size to the node we are updating
@@ -36,6 +41,7 @@ func load_font(font_name: String):
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	num_lines = self.get_visible_line_count()
+	# Get the default alignment
 
 # Move and resize this child so it fits in the parents texture
 func center_self():
@@ -50,7 +56,8 @@ func _on_text_edit_text_changed():
 	# Get the new text and update us with it
 	# TODO: Save/grab the alignment too
 	var new_text: String = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit").text
-	self.text = new_text
+	# Add the bbcode tag depending on the alignment
+	self.text = "[p align=" + align_tag_map[align_id] + "]" + new_text + "[/p]"
 	center_self()
 
 func _on_font_size_value_changed(new_font_size: float):
@@ -66,10 +73,14 @@ func _on_preview_item_rect_changed():
 	self.add_theme_font_size_override("normal_font_size", adjusted_font_size)
 	center_self()
 
-func _on_option_button_2_item_selected(index: int):
-	# Grab the font name and load it
+func _on_font_select_item_selected(index: int):
+		# Grab the font name and load it
 	var font_name: String = font_select.get_item_text(index)
 	load_font("res://" + font_name)
 	# if that doesn't work try loading from user
 	load_font("usr://fonts/" + font_name)
-	pass # Replace with function body.
+
+func _on_align_select_item_selected(index: int):
+	align_id = index
+	# Update the text with the new alignment
+	_on_text_edit_text_changed()

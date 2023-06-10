@@ -1,9 +1,5 @@
 extends OptionButton
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
 @onready var usr_fonts = []
 @onready var res_fonts = []
 
@@ -22,7 +18,6 @@ func load_font_names(path: String):
 	while file_name != "":
 		if not dir.current_is_dir():
 			var file_path = img_path + file_name
-				
 			if file_name.ends_with('ttf'):
 				output.append(file_name)
 				
@@ -41,9 +36,3 @@ func _ready():
 	
 	for font in usr_fonts:
 		self.add_item(font)
-	
-	self.connect("item_selected", Callable(self, "item_changed"))
-	
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass

@@ -22,23 +22,4 @@ func _ready():
 		self.set("theme_override_fonts/normal_font", font)
 
 func _process(delta):
-	var new_num_lines = self.get_visible_line_count()
-	if new_num_lines != num_lines:
-		num_lines = new_num_lines
-		
-		var font_size = self.get_theme_font_size("normal_font_size")
-		if font_size == 1:
-			# Return if no valid font_size is set
-			return
-		# use the font size to get the size we are total
-		var tot_y = font_size * num_lines
-		
-		# find the center of the parent vertically
-		var parent_y = self.get_parent_area_size().y
-		var parent_x = self.get_parent_area_size().x
-		var parent = self.get_parent()
-		
-		var par_center = parent_y/2
-		
-		var move_here = par_center - tot_y/2
-		self.position.y  = move_here
+	pass
