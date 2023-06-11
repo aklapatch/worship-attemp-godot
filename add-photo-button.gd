@@ -18,13 +18,6 @@ func _ready():
 	self.add_user_signal("added_img")
 
 func _button_pressed():
-	#fd.popup_centered_minsize(Vector2(100,100))
-	var ps_script_folder = [
-	"Add-Type -AssemblyName System.Windows.Forms",
-	"$FolderDialog = New-Object -Typename System.Windows.Forms.FolderBrowserDialog",
-	"[void]$FolderDialog.ShowDialog()",
-	"$FolderDialog.SelectedPath"
-	]
 	var dst = ProjectSettings.globalize_path("user://images/")
 	var ps_script_file = [
 	"Add-Type -AssemblyName System.Windows.Forms",
@@ -36,9 +29,5 @@ func _button_pressed():
 	var out = exec_script(ps_script_file)
 	if out != 0:
 		push_warning("Failed to import image")
-	# move the file to user:// images
-	# TODO: have powershell copy the file. This method doesn't work for somem reason.
+
 	emit_signal("added_img")
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass

@@ -20,12 +20,7 @@ extends RichTextLabel
 @onready var align_tag_map = {0 : "center", 1: "left", 2: "right"}
 @onready var align_id = align_select.selected
 # When a slide is selected, it should push itself to this node
-	
-# push the current font and the font size to the node we are updating
-func update_push_node(font: FontFile):
-	#push_node.add_theme_font_override("normal_font", font)
-	pass
-	
+
 # Load new font
 func load_font(font_name: String):
 	var new_font = load(font_name)
@@ -36,29 +31,18 @@ func load_font(font_name: String):
 		new_font_size = get_parent().get_theme_font_size("normal_font_size")
 	
 	self.add_theme_font_override("normal_font", new_font)
-	update_push_node(new_font)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	num_lines = self.get_visible_line_count()
 	# Get the default alignment
 
-# Move and resize this child so it fits in the parents texture
-func center_self():
-	var parent_size = get_parent().size
-	var texture_size = get_parent().texture.get_size()
-	
-	# Figure out the aspect ratio of the texture based on the node size
-	var texture_aspect: float = float(texture_size.x) / float(texture_size.y)
-	var needed_width = texture_aspect * parent_size.y
-	
 func _on_text_edit_text_changed():
 	# Get the new text and update us with it
 	# TODO: Save/grab the alignment too
 	var new_text: String = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit").text
 	# Add the bbcode tag depending on the alignment
 	self.text = "[p align=" + align_tag_map[align_id] + "]" + new_text + "[/p]"
-	center_self()
 
 func _on_font_size_value_changed(new_font_size: float):
 	percent_font_size = int(new_font_size)
@@ -71,7 +55,6 @@ func _on_preview_item_rect_changed():
 	# Re-adjust our font size to match the ratio
 	var adjusted_font_size = int(get_parent().size.y * (float(percent_font_size)/100.0))
 	self.add_theme_font_size_override("normal_font_size", adjusted_font_size)
-	center_self()
 
 func _on_font_select_item_selected(index: int):
 		# Grab the font name and load it

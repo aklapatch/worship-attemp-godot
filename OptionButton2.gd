@@ -11,13 +11,10 @@ func load_font_names(path: String):
 		print("Error %u opening %s" % err, OK)
 		return
 		
-	var img_path = ProjectSettings.globalize_path(path)
-		
 	dir.list_dir_begin() # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 	var file_name = dir.get_next()
 	while file_name != "":
 		if not dir.current_is_dir():
-			var file_path = img_path + file_name
 			if file_name.ends_with('ttf'):
 				output.append(file_name)
 				
