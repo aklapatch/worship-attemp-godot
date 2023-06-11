@@ -7,6 +7,8 @@ func _ready():
 	self.hide_root = true
 	
 func _process(delta):
+	# TODO: Convert ui_delete to be an action added by add_action and action_add_event
+	# I prefer to have the code set something like that up, not sure why. I don't have the philosophy with signals
 	if Input.is_action_pressed("ui_delete"):
 		# Remove the selected child if one is selected
 		var selected = self.get_selected()
