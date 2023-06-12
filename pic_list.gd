@@ -48,10 +48,10 @@ func load_pics(path: String):
 func load_self_pics():
 	load_pics("user://images/")
 	back_sel.get_popup().clear()
-	# Set the contents of the image select menu button
-	# TODO: Add a bit that udpate 
-	for child in get_tree().get_nodes_in_group("media pics"):
-		back_sel.add_pic_item(child.get_texture(), "test")
+	# Go through our items and import all the images to background select
+	for item_i in range(0, self.item_count):
+		back_sel.add_pic_item(self.get_item_icon(item_i), self.get_item_text(item_i))
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

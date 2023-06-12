@@ -25,11 +25,12 @@ func load_font_names(path: String):
 func _ready():
 	res_fonts = load_font_names("res://")
 	usr_fonts = load_font_names("user://fonts/")
-	
-	var preview_node = get_node("../../../../../AspectRatioContainer/Preview/Previewtext")
-	preview_node.load_font("res://" + res_fonts[0])
+
 	for item in res_fonts:
 		self.add_item(item)
 	
 	for font in usr_fonts:
 		self.add_item(font)
+		
+	# Tell the preview node to chose the first font in the menu
+	self.item_selected.emit(0)

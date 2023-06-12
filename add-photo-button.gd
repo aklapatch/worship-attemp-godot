@@ -3,7 +3,6 @@ extends Button
 # yoinked from https://www.reddit.com/r/godot/comments/pc45q4/hacky_way_to_get_a_native_file_dialog_on_windows/
 # Give it an Array of valid PS commands
 func exec_script(ps_script : Array) -> int:
-	
 	var ps_concat = "& { "
 	for line in ps_script:
 		ps_concat += line + '\n'

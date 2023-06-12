@@ -1,11 +1,16 @@
 extends Tree
 
+signal slide_treeitem_selected(item: TreeItem)
+
+signal treeitem_selected(item: TreeItem, is_a_set: bool)
+
 # TODO: Set deletion
 @onready var root = self.create_item()
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	self.hide_root = true
-	
+	pass
+
 func _process(delta):
 	# TODO: Convert ui_delete to be an action added by add_action and action_add_event
 	# I prefer to have the code set something like that up, not sure why. I don't have the philosophy with signals
@@ -42,7 +47,39 @@ func _on_new_slide_pressed():
 	var new_slide = self.create_item(new_root, index)
 	new_slide.set_text(0, "New Slide %d" % new_root.get_child_count())
 	new_slide.set_editable(0, true)
-		
-		
-		
+	new_slide.set_editable(1, false)
+	new_slide.set_icon_max_width(1, 100)
+	new_slide.set_icon(1, load("res://icon.png"))
 	
+	# Create a sub slide to hold the text
+	var text_slide = self.create_item(new_slide)
+	# Need to put in a space to have the item vertically space itself out
+	text_slide.set_text(0, " ")
+	text_slide.set_editable(0, false)
+	text_slide.set_editable(1, false)
+	text_slide.set_selectable(0, false)
+	text_slide.set_selectable(1, false)
+
+func _on_multi_selected(item: TreeItem, column: int, selected: bool):
+	# Find the selected item. Only emit the other signal if a slide (non-set) item was selected
+	var is_set = item.get_parent() == root
+	
+	# emit this signal since it's for any item
+	treeitem_selected.emit(item, is_set)
+	
+	# if this is a set, then don't emit the signal
+	if is_set:
+		return
+		
+	# Otherwise, emit the signal. Make sure that we get the slide's text
+	slide_treeitem_selected.emit(item if item.get_child_count() == 0 else item.get_first_child())
+
+func _on_text_edit_text_changed():
+	# If a slide node or a slide text node is selected, then update its text
+	var selected = self.get_selected()
+	if selected == null:
+		return
+	if selected.get_parent() != root:
+		var text_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit")
+		selected.get_child(0).set_text(0, text_node.text)
+	pass # Replace with function body.

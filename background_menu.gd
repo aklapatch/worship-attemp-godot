@@ -1,20 +1,15 @@
 extends MenuButton
 
-@onready var prev_tex_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/Preview")
-@onready var prev_text_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/Preview/Previewtext")
+signal switch_background(new: Texture2D)
 
 func send_img_to_preview(index: int):
 	var item_tex = self.get_popup().get_item_icon(index)
 	var orig_tex = item_tex.duplicate()
-	prev_tex_node.set_texture(orig_tex)
-	# set the push node too
-	assert(prev_text_node != null)
-	prev_text_node.push_node.get_parent().set_texture(orig_tex)
+	switch_background.emit(orig_tex)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	self.get_popup().hide_on_item_selection = true
-	self.get_popup()
 	self.get_popup().connect("index_pressed", Callable(self, "send_img_to_preview"))
 
 func add_pic_item(texture: ImageTexture, label: String):
