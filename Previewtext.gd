@@ -69,5 +69,6 @@ func _on_align_select_item_selected(index: int):
 
 func _on_slides_slide_treeitem_selected(item: TreeItem):
 	# Grab the item's text and show it
+	# TODO: Change to pull from a signal from the tree
 	self.text = item.get_text(0)
 	pass # Replace with function body.

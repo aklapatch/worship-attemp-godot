@@ -48,13 +48,12 @@ func _on_new_slide_pressed():
 	new_slide.set_text(0, "New Slide %d" % new_root.get_child_count())
 	new_slide.set_editable(0, true)
 	new_slide.set_editable(1, false)
-	new_slide.set_icon_max_width(1, 100)
-	new_slide.set_icon(1, load("res://icon.png"))
 	
 	# Create a sub slide to hold the text
 	var text_slide = self.create_item(new_slide)
 	# Need to put in a space to have the item vertically space itself out
-	text_slide.set_text(0, " ")
+	text_slide.set_icon_max_width(0, 160)
+	text_slide.set_icon(0, load("res://icon.png"))
 	text_slide.set_editable(0, false)
 	text_slide.set_editable(1, false)
 	text_slide.set_selectable(0, false)
@@ -74,12 +73,18 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 	# Otherwise, emit the signal. Make sure that we get the slide's text
 	slide_treeitem_selected.emit(item if item.get_child_count() == 0 else item.get_first_child())
 
+@onready var view_port = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport")
+
 func _on_text_edit_text_changed():
-	# If a slide node or a slide text node is selected, then update its text
+	
+	pass # Replace with function body.
+
+
+func _on_previewtext_finished():
+	# If a slide node or a slide text node is selected, then update our texture/icon
 	var selected = self.get_selected()
 	if selected == null:
 		return
 	if selected.get_parent() != root:
-		var text_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit")
-		selected.get_child(0).set_text(0, text_node.text)
+		selected.get_child(0).set_icon(0, view_port.get_texture().duplicate())
 	pass # Replace with function body.
