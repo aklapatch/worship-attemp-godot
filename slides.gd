@@ -4,6 +4,7 @@ signal slide_treeitem_selected(item: TreeItem)
 
 signal treeitem_selected(item: TreeItem, is_a_set: bool)
 
+# Stores the text for the slide, the alignment, and the texture
 var slide_tex_and_text = {}
 
 # TODO: Set deletion
@@ -76,17 +77,14 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 	slide_treeitem_selected.emit(item if item.get_child_count() == 0 else item.get_first_child())
 
 @onready var view_port = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport")
-
-func _on_text_edit_text_changed():
-	
-	pass # Replace with function body.
-
-
-func _on_previewtext_finished():
-	# If a slide node or a slide text node is selected, then update our texture/icon
+func _on_preview_changed_background(new_back: Texture2D):
 	var selected = self.get_selected()
 	if selected == null:
 		return
+
 	if selected.get_parent() != root:
-		selected.get_child(0).set_icon(0, view_port.get_texture().duplicate())
-	pass # Replace with function body.
+		# Get the texture and store it here:
+		if not slide_tex_and_text.has(selected):
+			slide_tex_and_text[selected] = {}
+		slide_tex_and_text[selected].merge({ 'texture' : new_back }, true)
+		selected.get_child(0).set_icon(0, view_port.get_texture())
