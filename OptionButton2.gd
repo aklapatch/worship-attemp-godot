@@ -1,7 +1,6 @@
 extends OptionButton
 
-@onready var usr_fonts = []
-@onready var res_fonts = []
+signal font_changed(font_name: String)
 
 func load_font_names(path: String):
 	var dir = DirAccess.open(path)
@@ -23,8 +22,9 @@ func load_font_names(path: String):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	res_fonts = load_font_names("res://")
-	usr_fonts = load_font_names("user://fonts/")
+	# Load the fonts into memory, then have the signal send the font
+	var res_fonts = load_font_names("res://")
+	var usr_fonts = load_font_names("user://fonts/")
 
 	for item in res_fonts:
 		self.add_item(item)
@@ -33,4 +33,8 @@ func _ready():
 		self.add_item(font)
 		
 	# Tell the preview node to chose the first font in the menu
-	self.item_selected.emit(0)
+	var default_font = self.get_item_text(0)
+	font_changed.emit(default_font)
+
+func _on_item_selected(index: int):
+	font_changed.emit(self.get_item_text(index))

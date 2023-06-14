@@ -29,6 +29,4 @@ func add_pic_item(texture: ImageTexture, label: String):
 	var new_size = Vector2i(new_w, new_h)
 	img_tex.set_size_override(new_size)
 	self.get_popup().add_icon_item(img_tex, label)
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+

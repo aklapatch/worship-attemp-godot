@@ -1,17 +1,17 @@
 extends RichTextLabel
 
+signal updated_text(new_text: String)
+
+signal update_align(align_id: int)
+
 @onready var percent_font_size: int = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer3/FontSize").value
 
 # When the text changes in this node, push the font size, type, and the text
 # Default to the first node in the slide list
 # TODO: how to handle deleted nodes?
 @onready var font_select = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer4/font_select")
-@onready var align_select = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer2/align_select")
 
-# This needs to be synced with the text alignment button
-@onready var align_tag_map = {0 : "center", 1: "left", 2: "right"}
-@onready var align_id = align_select.selected
-# When a slide is selected, it should push itself to this node
+@onready var align_str = "center"
 
 # Load new font
 func load_font(font_name: String):
@@ -37,7 +37,9 @@ func _on_text_edit_text_changed():
 	# TODO: Save/grab the alignment too
 	var new_text: String = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit").text
 	# Add the bbcode tag depending on the alignment
-	self.text = "[p align=" + align_tag_map[align_id] + "]" + new_text + "[/p]"
+	self.text = "[p align=" + align_str + "]" + new_text + "[/p]"
+	
+	updated_text.emit(new_text)
 
 func _on_font_size_value_changed(new_font_size: float):
 	var adjusted_font_size = int(get_parent().size.y * (new_font_size/100))
@@ -47,12 +49,14 @@ func _on_font_size_value_changed(new_font_size: float):
 
 func _on_preview_item_rect_changed():
 	# Re-adjust our font size to match the ratio
-	var adjusted_font_size = int(get_parent().size.y * (float(percent_font_size)/100.0))
-	self.add_theme_font_size_override("normal_font_size", adjusted_font_size)
+	var adjusted_font_size = get_parent().size.y * (float(percent_font_size)/100.0)
+	self.add_theme_font_size_override("normal_font_size", int(adjusted_font_size))
 
-func _on_font_select_item_selected(index: int):
-		# Grab the font name and load it
-	var font_name: String = font_select.get_item_text(index)
+func _on_align_select_align_selected(new_align: String):
+	align_str = new_align
+	_on_text_edit_text_changed()
+
+func _on_font_select_font_changed(font_name: String):
 	var rc = load_font("res://%s" % font_name)
 	if rc != OK:
 		rc = load_font("usr://fonts/%s" % font_name)
@@ -61,14 +65,3 @@ func _on_font_select_item_selected(index: int):
 		push_error("Failed to load font %s" % font_name)
 		
 	_on_text_edit_text_changed()
-
-func _on_align_select_item_selected(index: int):
-	align_id = index
-	# Update the text with the new alignment
-	_on_text_edit_text_changed()
-
-func _on_slides_slide_treeitem_selected(item: TreeItem):
-	# Grab the item's text and show it
-	# TODO: Change to pull from a signal from the tree
-	self.text = item.get_text(0)
-	pass # Replace with function body.

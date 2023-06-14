@@ -4,6 +4,8 @@ signal slide_treeitem_selected(item: TreeItem)
 
 signal treeitem_selected(item: TreeItem, is_a_set: bool)
 
+var slide_tex_and_text = {}
+
 # TODO: Set deletion
 @onready var root = self.create_item()
 
