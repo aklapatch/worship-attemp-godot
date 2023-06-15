@@ -4,6 +4,8 @@ signal slide_treeitem_selected(item: TreeItem)
 
 signal treeitem_selected(item: TreeItem, is_a_set: bool)
 
+signal selected_slide_text(slide_text: String)
+
 # Stores the text for the slide, the alignment, and the texture
 var slide_tex_and_text = {}
 
@@ -75,6 +77,12 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 		
 	# Otherwise, emit the signal. Make sure that we get the slide's text
 	slide_treeitem_selected.emit(item if item.get_child_count() == 0 else item.get_first_child())
+	
+	# Emit the text signal if there's text for this node
+	if slide_tex_and_text.has(item) and slide_tex_and_text[item].has('words'):
+		selected_slide_text.emit(slide_tex_and_text[item]['words'])
+	elif not slide_tex_and_text.has(item) or not slide_tex_and_text[item].has('words'):
+		selected_slide_text.emit("")
 
 @onready var view_port = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport")
 func _on_preview_changed_background(new_back: Texture2D):
@@ -88,3 +96,16 @@ func _on_preview_changed_background(new_back: Texture2D):
 			slide_tex_and_text[selected] = {}
 		slide_tex_and_text[selected].merge({ 'texture' : new_back }, true)
 		selected.get_child(0).set_icon(0, view_port.get_texture())
+
+# TODO: Should all the text + textures + alignment be in one place, or should each widget hold it's stuff
+# i.e., the font size widget holds the font size for every slide, the texteditor the text for every slide, etc.
+# I'm deciding to leave the slides holding everything because when we're saving this, it will be useful to have everything in one place
+func _on_text_edit_text_update(new_text):
+		# Store the new text So we can get it back later
+	var cur_item = self.get_selected()
+	if cur_item == null:
+		return
+		
+	if not slide_tex_and_text.has(cur_item):
+		slide_tex_and_text[cur_item] = {}
+	slide_tex_and_text[cur_item].merge({'words' : new_text}, true)
