@@ -6,6 +6,8 @@ signal treeitem_selected(item: TreeItem, is_a_set: bool)
 
 signal selected_slide_text(slide_text: String)
 
+signal selected_slide_background(background: Texture2D)
+
 # Stores the text for the slide, the alignment, and the texture
 var slide_tex_and_text = {}
 
@@ -58,11 +60,16 @@ func _on_new_slide_pressed():
 	var text_slide = self.create_item(new_slide)
 	# Need to put in a space to have the item vertically space itself out
 	text_slide.set_icon_max_width(0, 160)
-	text_slide.set_icon(0, load("res://icon.png"))
+	# Grab the first slide from the slide list
+	var background_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer5/MenuButton")
+	var default_background = background_node.get_popup().get_item_icon(0)
+	text_slide.set_icon(0, default_background)
 	text_slide.set_editable(0, false)
 	text_slide.set_editable(1, false)
 	text_slide.set_selectable(0, false)
 	text_slide.set_selectable(1, false)
+
+var selected_item: TreeItem = null
 
 func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 	# Find the selected item. Only emit the other signal if a slide (non-set) item was selected
@@ -71,9 +78,20 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 	# emit this signal since it's for any item
 	treeitem_selected.emit(item, is_set)
 	
+	# Save the texture for the old node
+	if selected_item != null and not is_set:
+		var selected_child = selected_item.get_first_child()
+		var saved_texture = selected_child.get_icon(0).get_image()
+		selected_child.set_icon(0, ImageTexture.create_from_image(saved_texture))
+		
+	selected_item = item
+	
 	# if this is a set, then don't emit the signal
 	if is_set:
 		return
+		
+	# Set the slide texture to be the viewport
+	item.get_first_child().set_icon(0, view_port.get_texture())
 		
 	# Otherwise, emit the signal. Make sure that we get the slide's text
 	slide_treeitem_selected.emit(item if item.get_child_count() == 0 else item.get_first_child())
@@ -83,6 +101,10 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 		selected_slide_text.emit(slide_tex_and_text[item]['words'])
 	elif not slide_tex_and_text.has(item) or not slide_tex_and_text[item].has('words'):
 		selected_slide_text.emit("")
+
+	# Emit the stored texture if there is one
+	if slide_tex_and_text.has(item) and slide_tex_and_text[item].has('texture'):
+		selected_slide_background.emit(slide_tex_and_text[item]['texture'])
 
 @onready var view_port = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport")
 func _on_preview_changed_background(new_back: Texture2D):
