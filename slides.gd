@@ -71,6 +71,12 @@ func _on_new_slide_pressed():
 
 var selected_item: TreeItem = null
 
+@onready var view_port = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport")
+@onready var preview = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview")
+@onready var preview_text = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview/Previewtext")
+@onready var font_size = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer3/FontSize")
+@onready var font_align = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer2/align_select")
+
 func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 	# Find the selected item. Only emit the other signal if a slide (non-set) item was selected
 	var is_set = item.get_parent() == root
@@ -83,6 +89,16 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 		var selected_child = selected_item.get_first_child()
 		var saved_texture = selected_child.get_icon(0).get_image()
 		selected_child.set_icon(0, ImageTexture.create_from_image(saved_texture))
+		
+		# Grab all the data for this slide:
+		# - The text
+		# - The texture
+		# - The font
+		# - The font size
+		# - The text alignment
+		if not slide_tex_and_text.has(selected):
+			slide_tex_and_text[selected] = {}
+		
 		
 	selected_item = item
 	
@@ -106,28 +122,7 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 	if slide_tex_and_text.has(item) and slide_tex_and_text[item].has('texture'):
 		selected_slide_background.emit(slide_tex_and_text[item]['texture'])
 
-@onready var view_port = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport")
-func _on_preview_changed_background(new_back: Texture2D):
-	var selected = self.get_selected()
-	if selected == null:
-		return
-
-	if selected.get_parent() != root:
-		# Get the texture and store it here:
-		if not slide_tex_and_text.has(selected):
-			slide_tex_and_text[selected] = {}
-		slide_tex_and_text[selected].merge({ 'texture' : new_back }, true)
-		selected.get_child(0).set_icon(0, view_port.get_texture())
 
 # TODO: Should all the text + textures + alignment be in one place, or should each widget hold it's stuff
 # i.e., the font size widget holds the font size for every slide, the texteditor the text for every slide, etc.
 # I'm deciding to leave the slides holding everything because when we're saving this, it will be useful to have everything in one place
-func _on_text_edit_text_update(new_text):
-		# Store the new text So we can get it back later
-	var cur_item = self.get_selected()
-	if cur_item == null:
-		return
-		
-	if not slide_tex_and_text.has(cur_item):
-		slide_tex_and_text[cur_item] = {}
-	slide_tex_and_text[cur_item].merge({'words' : new_text}, true)

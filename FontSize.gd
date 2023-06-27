@@ -4,4 +4,3 @@ extends SpinBox
 func _ready():
 	self.value_changed.emit(self.value)
 	pass # Replace with function body.
-
