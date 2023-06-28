@@ -8,6 +8,10 @@ signal selected_slide_text(slide_text: String)
 
 signal selected_slide_background(background: Texture2D)
 
+signal selected_slide_font_size(size: int)
+
+signal selected_slide_font_align(align: String)
+
 # Stores the text for the slide, the alignment, and the texture
 var slide_tex_and_text = {}
 
@@ -76,8 +80,14 @@ var selected_item: TreeItem = null
 @onready var preview_text = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview/Previewtext")
 @onready var font_size = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer3/FontSize")
 @onready var font_align = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer2/align_select")
+@onready var text_edit = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit")
+@onready var font_name = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer4/font_select")
 
 func _on_multi_selected(item: TreeItem, column: int, selected: bool):
+	
+	if selected == false:
+		return
+		
 	# Find the selected item. Only emit the other signal if a slide (non-set) item was selected
 	var is_set = item.get_parent() == root
 	
@@ -96,10 +106,19 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 		# - The font
 		# - The font size
 		# - The text alignment
-		if not slide_tex_and_text.has(selected):
-			slide_tex_and_text[selected] = {}
-		
-		
+		if selected_item != item:
+			var slide_words = text_edit.text 
+			var slide_texture = preview.texture
+			var s_font_size = font_size.value
+			var s_font_align = font_align.get_item_text(font_align.selected)
+			var s_font_name = font_name.get_item_text(font_name.selected)
+			slide_tex_and_text[selected_item] = { 
+				'words' : slide_words,
+				'texture' : slide_texture,
+				'font_size' : s_font_size,
+				'font_align' : s_font_align,
+				'font_name' : s_font_name }
+
 	selected_item = item
 	
 	# if this is a set, then don't emit the signal
@@ -121,7 +140,14 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 	# Emit the stored texture if there is one
 	if slide_tex_and_text.has(item) and slide_tex_and_text[item].has('texture'):
 		selected_slide_background.emit(slide_tex_and_text[item]['texture'])
-
+		
+	# Emit the stored font size if there is one
+	if slide_tex_and_text.has(item) and slide_tex_and_text[item].has('font_size'):
+		selected_slide_font_size.emit(slide_tex_and_text[item]['font_size'])
+		
+	# Emit the stored font size if there is one
+	if slide_tex_and_text.has(item) and slide_tex_and_text[item].has('font_align'):
+		selected_slide_font_align.emit(slide_tex_and_text[item]['font_align'])
 
 # TODO: Should all the text + textures + alignment be in one place, or should each widget hold it's stuff
 # i.e., the font size widget holds the font size for every slide, the texteditor the text for every slide, etc.
