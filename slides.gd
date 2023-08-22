@@ -12,6 +12,8 @@ signal selected_slide_font_size(size: int)
 
 signal selected_slide_font_align(align: String)
 
+signal push_texture(texture: Texture2D)
+
 # Stores the text for the slide, the alignment, and the texture
 var slide_tex_and_text = {}
 
@@ -59,15 +61,18 @@ func _on_new_slide_pressed():
 	new_slide.set_text(0, "New Slide %d" % new_root.get_child_count())
 	new_slide.set_editable(0, true)
 	new_slide.set_editable(1, false)
+	var default_text = load("res://icon.png")
+	new_slide.add_button(0, default_text)
 	
 	# Create a sub slide to hold the text
 	var text_slide = self.create_item(new_slide)
-	# Need to put in a space to have the item vertically space itself out
-	text_slide.set_icon_max_width(0, 160)
+
 	# Grab the first slide from the slide list
 	var background_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer5/MenuButton")
-	var default_background = background_node.get_popup().get_item_icon(0)
+	var default_background = background_node.get_popup().get_item_icon(0).duplicate()
 	text_slide.set_icon(0, default_background)
+		# Need to put in a space to have the item vertically space itself out
+	text_slide.set_icon_max_width(0, 200)
 	text_slide.set_editable(0, false)
 	text_slide.set_editable(1, false)
 	text_slide.set_selectable(0, false)
@@ -95,10 +100,11 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 	treeitem_selected.emit(item, is_set)
 	
 	# Save the texture for the old node
-	if selected_item != null and not is_set:
+	if selected_item != null and selected_item.get_parent() != root:
 		var selected_child = selected_item.get_first_child()
-		var saved_texture = selected_child.get_icon(0).get_image()
-		selected_child.set_icon(0, ImageTexture.create_from_image(saved_texture))
+		var saved_texture = selected_child.get_icon(0)
+		if saved_texture != null:
+			selected_child.set_icon(0, ImageTexture.create_from_image(saved_texture.get_image()))
 		
 		# Grab all the data for this slide:
 		# - The text
@@ -127,6 +133,7 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 		
 	# Set the slide texture to be the viewport
 	item.get_first_child().set_icon(0, view_port.get_texture())
+	item.get_first_child().set_icon_max_width(0, 200)
 		
 	# Otherwise, emit the signal. Make sure that we get the slide's text
 	slide_treeitem_selected.emit(item if item.get_child_count() == 0 else item.get_first_child())
@@ -152,3 +159,9 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 # TODO: Should all the text + textures + alignment be in one place, or should each widget hold it's stuff
 # i.e., the font size widget holds the font size for every slide, the texteditor the text for every slide, etc.
 # I'm deciding to leave the slides holding everything because when we're saving this, it will be useful to have everything in one place
+
+
+func _on_button_clicked(item, column, id, mouse_button_index):
+	# Grab the texture from this item and emit it as a signal
+	var emitted_tex = item.get_child(0).get_icon(0).get_image()
+	self.push_texture.emit(ImageTexture.create_from_image(emitted_tex))
