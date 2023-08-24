@@ -5,12 +5,10 @@ extends TextureRect
 func _ready():
 	pass # Replace with function body.
 
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
 
-
-func _on_slides_push_texture(texture):
+func _on_slides_display_texture(texture):
 	self.texture = texture
 	pass # Replace with function body.

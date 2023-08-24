@@ -12,7 +12,11 @@ signal selected_slide_font_size(size: int)
 
 signal selected_slide_font_align(align: String)
 
-signal push_texture(texture: Texture2D)
+signal selected_slide_font_name(align: String)
+
+signal display_texture(texture: Texture2D)
+
+signal display_text(words: String, font_size: int, font_align: String, font_name: String)
 
 # Stores the text for the slide, the alignment, and the texture
 var slide_tex_and_text = {}
@@ -61,7 +65,7 @@ func _on_new_slide_pressed():
 	new_slide.set_text(0, "New Slide %d" % new_root.get_child_count())
 	new_slide.set_editable(0, true)
 	new_slide.set_editable(1, false)
-	var default_text = load("res://icon.png")
+	var default_text = load("res://push_icon.png")
 	new_slide.add_button(0, default_text)
 	
 	# Create a sub slide to hold the text
@@ -162,6 +166,34 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 
 
 func _on_button_clicked(item, column, id, mouse_button_index):
+	
+	if item == selected_item:
+		var slide_words = text_edit.text 
+		var slide_texture = preview.texture
+		var s_font_size = font_size.value
+		var s_font_align = font_align.get_item_text(font_align.selected)
+		var s_font_name = font_name.get_item_text(font_name.selected)
+		
+		self.display_texture.emit(slide_texture.duplicate())
+		self.display_text.emit(slide_words, s_font_size, s_font_align, s_font_name)
+		return
+
 	# Grab the texture from this item and emit it as a signal
 	var emitted_tex = item.get_child(0).get_icon(0).get_image()
-	self.push_texture.emit(ImageTexture.create_from_image(emitted_tex))
+	self.display_texture.emit(ImageTexture.create_from_image(emitted_tex))
+	
+	# Get all the info and emit it if we have it
+	var s_words = null
+	if slide_tex_and_text.has(item) and slide_tex_and_text[item].has('words'):
+		s_words = slide_tex_and_text[item]['words']
+	var s_font_size = null
+	if slide_tex_and_text.has(item) and slide_tex_and_text[item].has('font_size'):
+		s_font_size = slide_tex_and_text[item]['font_size']
+	var s_font_align = null
+	if slide_tex_and_text.has(item) and slide_tex_and_text[item].has('font_align'):
+		s_font_align = slide_tex_and_text[item]['font_align']
+	var s_font_name = null
+	if slide_tex_and_text.has(item) and slide_tex_and_text[item].has('font_name'):
+		s_font_name = slide_tex_and_text[item]['font_name']
+		
+	self.display_text.emit(s_words, s_font_size, s_font_align, s_font_name)
