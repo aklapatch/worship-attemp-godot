@@ -40,7 +40,8 @@ func update_text_or_align(new_text: String, align: String):
 	updated_text.emit(new_text)
 
 func _on_font_size_value_changed(new_font_size: float):
-	var adjusted_font_size = int(get_parent().size.y * (new_font_size/100))
+	percent_font_size = new_font_size
+	var adjusted_font_size = int(get_parent().size.y * (percent_font_size/100.0))
 	self.add_theme_font_size_override("normal_font_size", adjusted_font_size)
 	update_text_or_align(curr_text, align_str)
 

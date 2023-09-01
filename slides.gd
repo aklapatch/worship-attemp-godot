@@ -179,8 +179,8 @@ func _on_button_clicked(item, column, id, mouse_button_index):
 		return
 
 	# Grab the texture from this item and emit it as a signal
-	var emitted_tex = item.get_child(0).get_icon(0).get_image()
-	self.display_texture.emit(ImageTexture.create_from_image(emitted_tex))
+	var emitted_tex = slide_tex_and_text[item]['texture']
+	self.display_texture.emit(emitted_tex.duplicate())
 	
 	# Get all the info and emit it if we have it
 	var s_words = null

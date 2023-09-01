@@ -18,7 +18,3 @@ func _process(delta):
 func _on_present_pressed():
 	self.show()
 	pass # Replace with function body.
-
-
-func _on_slides_push_texture(texture):
-	pass # Replace with function body.
