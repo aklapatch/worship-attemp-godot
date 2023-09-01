@@ -81,6 +81,19 @@ func _on_new_slide_pressed():
 	text_slide.set_editable(1, false)
 	text_slide.set_selectable(0, false)
 	text_slide.set_selectable(1, false)
+	
+	# Pre-populate the dictionary in case we need to save later
+	var slide_words = ""
+	var slide_texture = default_background
+	var s_font_size = font_size.value
+	var s_font_align = font_align.get_item_text(font_align.selected)
+	var s_font_name = font_name.get_item_text(font_name.selected)
+	slide_tex_and_text[new_slide] = { 
+		'words' : slide_words,
+		'texture' : slide_texture,
+		'font_size' : s_font_size,
+		'font_align' : s_font_align,
+		'font_name' : s_font_name }
 
 var selected_item: TreeItem = null
 
@@ -197,3 +210,39 @@ func _on_button_clicked(item, column, id, mouse_button_index):
 		s_font_name = slide_tex_and_text[item]['font_name']
 		
 	self.display_text.emit(s_words, s_font_size, s_font_align, s_font_name)
+
+
+func _on_button_button_up():
+	# var json_str = JSON.stringify(data_to_use)
+	var save_dir = "user://sets/"
+	var result = DirAccess.make_dir_absolute(save_dir)
+	if result != OK and result != ERR_ALREADY_EXISTS:
+		push_error("Error %s making %s" % [error_string(result), save_dir])
+	for child in root.get_children():
+		var set_slides = []
+		for slide in child.get_children():
+			if slide == selected_item:
+				var slide_words = text_edit.text 
+				var slide_texture = preview.texture
+				var s_font_size = font_size.value
+				var s_font_align = font_align.get_item_text(font_align.selected)
+				var s_font_name = font_name.get_item_text(font_name.selected)
+				slide_tex_and_text[slide] = { 
+				'words' : slide_words,
+				'texture' : slide_texture,
+				'font_size' : s_font_size,
+				'font_align' : s_font_align,
+				'font_name' : s_font_name }
+				
+			set_slides.append(slide_tex_and_text[slide])
+		# TODO: only save the texture name
+		var json_to_write = JSON.stringify(set_slides)
+		var file_name = save_dir + child.get_text(0) + ".json"
+		print("writing to %s" % file_name)
+		if FileAccess.file_exists(file_name):
+			# TODO: Ask to overwrite?
+			print("%s exists alrady" % file_name)
+			print("path=%s" % ProjectSettings.globalize_path(file_name))
+		var f_handle = FileAccess.open(file_name, FileAccess.WRITE)
+		f_handle.store_string(json_to_write)
+		f_handle.close()

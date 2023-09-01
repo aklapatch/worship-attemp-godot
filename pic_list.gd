@@ -6,6 +6,8 @@ extends ItemList
 
 @onready var zoom_slider = get_node('../../HFlowContainer/HSlider')
 
+# TODO: add a way to delete pictures
+
 func load_pics(path: String):
 	var dir = DirAccess.open(path)
 	var err = dir.make_dir_recursive(path)

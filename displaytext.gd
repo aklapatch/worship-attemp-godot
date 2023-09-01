@@ -14,6 +14,8 @@ func get_font(font_name: String):
 
 	return load(font_name)
 
+# TODO: Add a menu button that changes which screen this thing is on
+# That should probably be a popup menu
 func _on_slides_display_text(words, font_size, font_align, font):
 	if words == null:
 		words = ""
