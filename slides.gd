@@ -131,7 +131,7 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 		# - The text alignment
 		if selected_item != item:
 			var slide_words = text_edit.text 
-			var slide_texture = preview.texture
+			var slide_texture = preview.texture.resource_path
 			var s_font_size = font_size.value
 			var s_font_align = font_align.get_item_text(font_align.selected)
 			var s_font_name = font_name.get_item_text(font_name.selected)
@@ -182,7 +182,7 @@ func _on_button_clicked(item, column, id, mouse_button_index):
 	
 	if item == selected_item:
 		var slide_words = text_edit.text 
-		var slide_texture = preview.texture
+		var slide_texture = preview.texture.resource_path
 		var s_font_size = font_size.value
 		var s_font_align = font_align.get_item_text(font_align.selected)
 		var s_font_name = font_name.get_item_text(font_name.selected)
@@ -223,7 +223,7 @@ func _on_button_button_up():
 		for slide in child.get_children():
 			if slide == selected_item:
 				var slide_words = text_edit.text 
-				var slide_texture = preview.texture
+				var slide_texture = preview.texture.resource_path
 				var s_font_size = font_size.value
 				var s_font_align = font_align.get_item_text(font_align.selected)
 				var s_font_name = font_name.get_item_text(font_name.selected)
@@ -236,7 +236,8 @@ func _on_button_button_up():
 				
 			set_slides.append(slide_tex_and_text[slide])
 		# TODO: only save the texture name
-		var json_to_write = JSON.stringify(set_slides)
+		var json_dict = { 'name' : child.get_text(0), 'slides': set_slides}
+		var json_to_write = JSON.stringify(json_dict)
 		var file_name = save_dir + child.get_text(0) + ".json"
 		print("writing to %s" % file_name)
 		if FileAccess.file_exists(file_name):
@@ -246,3 +247,7 @@ func _on_button_button_up():
 		var f_handle = FileAccess.open(file_name, FileAccess.WRITE)
 		f_handle.store_string(json_to_write)
 		f_handle.close()
+
+func _on_import_set_import_set(data):
+	
+	pass # Replace with function body.
