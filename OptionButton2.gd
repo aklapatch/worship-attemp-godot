@@ -10,14 +10,11 @@ func load_font_names(path: String):
 		print("Error %u opening %s" % err, OK)
 		return
 		
-	dir.list_dir_begin() # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
-	var file_name = dir.get_next()
-	while file_name != "":
-		if not dir.current_is_dir():
-			if file_name.ends_with('ttf'):
-				output.append(file_name)
-				
-		file_name = dir.get_next()
+	var files = dir.get_files()
+	for file in files:
+		if file.ends_with('.ttf'):
+			output.append(file)
+		
 	return output
 
 # Called when the node enters the scene tree for the first time.

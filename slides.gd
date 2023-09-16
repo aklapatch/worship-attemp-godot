@@ -6,7 +6,7 @@ signal treeitem_selected(item: TreeItem, is_a_set: bool)
 
 signal selected_slide_text(slide_text: String)
 
-signal selected_slide_background(background: Texture2D)
+signal selected_slide_background(back_text_name: String)
 
 signal selected_slide_font_size(size: int)
 
@@ -14,7 +14,7 @@ signal selected_slide_font_align(align: String)
 
 signal selected_slide_font_name(align: String)
 
-signal display_texture(texture: Texture2D)
+signal display_texture(tex_name: String)
 
 signal display_text(words: String, font_size: int, font_align: String, font_name: String)
 
@@ -23,6 +23,7 @@ var slide_tex_and_text = {}
 
 # TODO: Set deletion
 @onready var root = self.create_item()
+@onready var pic_by_names = get_node('/root/Control/TabContainer/VBoxContainer/ScrollContainer/pic_list').pic_by_names
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -75,7 +76,7 @@ func _on_new_slide_pressed():
 	var background_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer5/MenuButton")
 	var default_background = background_node.get_popup().get_item_icon(0).duplicate()
 	text_slide.set_icon(0, default_background)
-		# Need to put in a space to have the item vertically space itself out
+	# Need to put in a space to have the item vertically space itself out
 	text_slide.set_icon_max_width(0, 200)
 	text_slide.set_editable(0, false)
 	text_slide.set_editable(1, false)
@@ -84,11 +85,15 @@ func _on_new_slide_pressed():
 	
 	# Pre-populate the dictionary in case we need to save later
 	var slide_words = ""
-	var slide_texture = default_background
+	var slide_texture = null
+	for name in pic_by_names:
+		slide_texture = name
+		break
 	var s_font_size = font_size.value
 	var s_font_align = font_align.get_item_text(font_align.selected)
 	var s_font_name = font_name.get_item_text(font_name.selected)
 	slide_tex_and_text[new_slide] = { 
+		'name' : new_slide.get_text(0),
 		'words' : slide_words,
 		'texture' : slide_texture,
 		'font_size' : s_font_size,
@@ -135,12 +140,14 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 			var s_font_size = font_size.value
 			var s_font_align = font_align.get_item_text(font_align.selected)
 			var s_font_name = font_name.get_item_text(font_name.selected)
-			slide_tex_and_text[selected_item] = { 
-				'words' : slide_words,
-				'texture' : slide_texture,
-				'font_size' : s_font_size,
+			var merge_data = {
+				'words' : text_edit.text,
+				'font_size' : font_size.value,
 				'font_align' : s_font_align,
-				'font_name' : s_font_name }
+				'font_name' : s_font_name
+			}
+			
+			slide_tex_and_text[selected_item].merge(merge_data, true)
 
 	selected_item = item
 	
@@ -177,9 +184,7 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 # i.e., the font size widget holds the font size for every slide, the texteditor the text for every slide, etc.
 # I'm deciding to leave the slides holding everything because when we're saving this, it will be useful to have everything in one place
 
-
 func _on_button_clicked(item, column, id, mouse_button_index):
-	
 	if item == selected_item:
 		var slide_words = text_edit.text 
 		var slide_texture = preview.texture.resource_path
@@ -187,7 +192,7 @@ func _on_button_clicked(item, column, id, mouse_button_index):
 		var s_font_align = font_align.get_item_text(font_align.selected)
 		var s_font_name = font_name.get_item_text(font_name.selected)
 		
-		self.display_texture.emit(slide_texture.duplicate())
+		self.display_texture.emit(preview.texture.duplicate())
 		self.display_text.emit(slide_words, s_font_size, s_font_align, s_font_name)
 		return
 
@@ -211,7 +216,6 @@ func _on_button_clicked(item, column, id, mouse_button_index):
 		
 	self.display_text.emit(s_words, s_font_size, s_font_align, s_font_name)
 
-
 func _on_button_button_up():
 	# var json_str = JSON.stringify(data_to_use)
 	var save_dir = "user://sets/"
@@ -222,17 +226,19 @@ func _on_button_button_up():
 		var set_slides = []
 		for slide in child.get_children():
 			if slide == selected_item:
-				var slide_words = text_edit.text 
-				var slide_texture = preview.texture.resource_path
-				var s_font_size = font_size.value
+				# Update the text. Other items should already be in the dictionary.
+				if not slide_tex_and_text.has(slide):
+					slide_tex_and_text[slide] = {}
+					
 				var s_font_align = font_align.get_item_text(font_align.selected)
 				var s_font_name = font_name.get_item_text(font_name.selected)
-				slide_tex_and_text[slide] = { 
-				'words' : slide_words,
-				'texture' : slide_texture,
-				'font_size' : s_font_size,
-				'font_align' : s_font_align,
-				'font_name' : s_font_name }
+				var merge_data = {
+					'name' : slide.get_text(0),
+					'words' : text_edit.text ,
+					'font_size' : font_size.value,
+					'font_align' : s_font_align,
+					'font_name' : s_font_name }
+				slide_tex_and_text[slide].merge(merge_data, true)
 				
 			set_slides.append(slide_tex_and_text[slide])
 		# TODO: only save the texture name
@@ -251,3 +257,11 @@ func _on_button_button_up():
 func _on_import_set_import_set(data):
 	
 	pass # Replace with function body.
+
+func _on_menu_button_switch_background(pic_name: String):
+	var sel_item = self.get_selected()
+	if sel_item == null:
+		return
+	if not slide_tex_and_text.has(sel_item):
+		slide_tex_and_text[sel_item] = {}
+	slide_tex_and_text[sel_item]['texture'] = pic_name

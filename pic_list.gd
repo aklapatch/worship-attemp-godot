@@ -1,9 +1,9 @@
 extends ItemList
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
+signal loaded_pics(pics_names: Dictionary)
 
+# TODO: add a default texture name
+@onready var pic_by_names: Dictionary = {}
 @onready var zoom_slider = get_node('../../HFlowContainer/HSlider')
 
 # TODO: add a way to delete pictures
@@ -15,45 +15,28 @@ func load_pics(path: String):
 		print("Error %u opening %s" % err, OK)
 		return
 		
-	var img_path = ProjectSettings.globalize_path(path)
-		
-	var dir_err = dir.list_dir_begin() # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
-	assert(dir_err == OK, "Dir opening failed")
-	
-	var file_name = dir.get_next()
-	while file_name != "":
-		if dir.current_is_dir():
-			print("Found directory: " + file_name)
-		else:
-			var file_path = img_path + file_name
-			
-			# Don't reload duplicate images
-			var item_text = ""
-			for i in range(0, self.item_count):
-				item_text = self.get_item_text(i)
-				if item_text == file_name:
-					break
-			if item_text == file_name:
-				file_name = dir.get_next()
-				continue
-				
-			if file_name.ends_with('png') or file_name.ends_with('jpg'):
-				var img = Image.load_from_file(file_path)
-				assert(img != null, "ERROR loading " + file_path)
-				var texture = ImageTexture.create_from_image(img)
-				
-				self.add_item(file_name, texture)
-				
-		file_name = dir.get_next()
+	var img_path = ProjectSettings.globalize_path(path)	
+	var files = dir.get_files()
+	var ret: Dictionary = {}
+	for file in files:
+		var file_path = img_path + file
+
+		if file.ends_with('.png') or file.ends_with('.jpg'):
+			var img = Image.load_from_file(file_path)
+			# NOTE: This image loading process strips the resource
+			# name and path, which we don't want because we want to be able
+			# to reference the image by name when loading slides from disk
+			# We'll store them in a dictionary to mitigate that
+			assert(img != null, "ERROR loading " + file_path)
+			var texture = ImageTexture.create_from_image(img)
+			ret[file] = texture
+			var new_sz = ret.size()
+	return ret
 
 @onready var back_sel = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer5/MenuButton")
 func load_self_pics():
-	load_pics("user://images/")
-	back_sel.get_popup().clear()
-	# Go through our items and import all the images to background select
-	for item_i in range(0, self.item_count):
-		back_sel.add_pic_item(self.get_item_icon(item_i), self.get_item_text(item_i))
-
+	pic_by_names = load_pics("user://images/")
+	self.loaded_pics.emit(pic_by_names)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -67,4 +50,3 @@ func update_icon_scale(val: float):
 	var int_val = int(val)
 	self.fixed_icon_size = Vector2i(int_val, int_val)
 	self.queue_redraw()
-

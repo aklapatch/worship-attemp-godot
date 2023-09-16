@@ -1,11 +1,10 @@
 extends MenuButton
 
-signal switch_background(new: Texture2D)
+signal switch_background(pic_name: String)
 
 func send_img_to_preview(index: int):
-	var item_tex = self.get_popup().get_item_icon(index)
-	var orig_tex = item_tex.duplicate()
-	switch_background.emit(orig_tex)
+	var pic_name = self.get_popup().get_item_text(index)
+	switch_background.emit(pic_name)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -30,3 +29,8 @@ func add_pic_item(texture: ImageTexture, label: String):
 	img_tex.set_size_override(new_size)
 	self.get_popup().add_icon_item(img_tex, label)
 
+func _on_pic_list_loaded_pics(pics_names):
+	self.get_popup().clear()
+	for name in pics_names:
+		self.add_pic_item(pics_names[name], name)
+	pass # Replace with function body.
