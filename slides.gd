@@ -23,7 +23,7 @@ var slide_tex_and_text = {}
 
 # TODO: Set deletion
 @onready var root = self.create_item()
-@onready var pic_by_names = get_node('/root/Control/TabContainer/VBoxContainer/ScrollContainer/pic_list').pic_by_names
+@onready var pic_list_node = get_node('/root/Control/TabContainer/VBoxContainer/ScrollContainer/pic_list')
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -74,7 +74,7 @@ func _on_new_slide_pressed():
 
 	# Grab the first slide from the slide list
 	var background_node = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer5/MenuButton")
-	var default_background = background_node.get_popup().get_item_icon(0).duplicate()
+	var default_background = pic_list_node.pic_by_names[pic_list_node.default_pic_name].duplicate()
 	text_slide.set_icon(0, default_background)
 	# Need to put in a space to have the item vertically space itself out
 	text_slide.set_icon_max_width(0, 200)
@@ -86,16 +86,13 @@ func _on_new_slide_pressed():
 	# Pre-populate the dictionary in case we need to save later
 	var slide_words = ""
 	var slide_texture = null
-	for name in pic_by_names:
-		slide_texture = name
-		break
 	var s_font_size = font_size.value
 	var s_font_align = font_align.get_item_text(font_align.selected)
 	var s_font_name = font_name.get_item_text(font_name.selected)
 	slide_tex_and_text[new_slide] = { 
 		'name' : new_slide.get_text(0),
 		'words' : slide_words,
-		'texture' : slide_texture,
+		'texture' : pic_list_node.default_pic_name,
 		'font_size' : s_font_size,
 		'font_align' : s_font_align,
 		'font_name' : s_font_name }
@@ -170,7 +167,9 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 
 	# Emit the stored texture if there is one
 	if slide_tex_and_text.has(item) and slide_tex_and_text[item].has('texture'):
-		selected_slide_background.emit(slide_tex_and_text[item]['texture'])
+		var tmp_tex = slide_tex_and_text[item]['texture']
+		if tmp_tex != null:
+			selected_slide_background.emit(tmp_tex)
 		
 	# Emit the stored font size if there is one
 	if slide_tex_and_text.has(item) and slide_tex_and_text[item].has('font_size'):
@@ -192,13 +191,13 @@ func _on_button_clicked(item, column, id, mouse_button_index):
 		var s_font_align = font_align.get_item_text(font_align.selected)
 		var s_font_name = font_name.get_item_text(font_name.selected)
 		
-		self.display_texture.emit(preview.texture.duplicate())
+		self.display_texture.emit(slide_tex_and_text[item]['texture'])
 		self.display_text.emit(slide_words, s_font_size, s_font_align, s_font_name)
 		return
 
 	# Grab the texture from this item and emit it as a signal
 	var emitted_tex = slide_tex_and_text[item]['texture']
-	self.display_texture.emit(emitted_tex.duplicate())
+	self.display_texture.emit(emitted_tex)
 	
 	# Get all the info and emit it if we have it
 	var s_words = null

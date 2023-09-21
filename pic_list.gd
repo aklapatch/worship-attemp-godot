@@ -3,6 +3,7 @@ extends ItemList
 signal loaded_pics(pics_names: Dictionary)
 
 # TODO: add a default texture name
+@onready var default_pic_name = "cropped-car-landscape.jpg"
 @onready var pic_by_names: Dictionary = {}
 @onready var zoom_slider = get_node('../../HFlowContainer/HSlider')
 
@@ -36,6 +37,10 @@ func load_pics(path: String):
 @onready var back_sel = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer5/MenuButton")
 func load_self_pics():
 	pic_by_names = load_pics("user://images/")
+	if not pic_by_names.has(default_pic_name):
+		for pic_name in pic_by_names:
+			default_pic_name = pic_name
+			break
 	self.loaded_pics.emit(pic_by_names)
 
 # Called when the node enters the scene tree for the first time.
