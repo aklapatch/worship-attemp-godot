@@ -9,10 +9,6 @@ func emit_set(index: int):
 func _ready():
 	self.get_popup().connect("index_pressed", Callable(self, "emit_set"))
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
-
 @onready var sets = []
 
 func _on_about_to_popup():

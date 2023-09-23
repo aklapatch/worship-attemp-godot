@@ -276,10 +276,9 @@ func _on_import_set_import_set(data: Dictionary):
 		new_slide.add_button(0, default_text)
 		var icon_child = self.create_item(new_slide)
 		icon_child.set_icon(0, load("res://icon.png"))
+		icon_child.set_selectable(0, false)
+		icon_child.set_editable(0, false)
 		icon_child.set_icon_max_width(0, 200)
-		
-	
-	pass # Replace with function body.
 
 func _on_menu_button_switch_background(pic_name: String):
 	var sel_item = self.get_selected()

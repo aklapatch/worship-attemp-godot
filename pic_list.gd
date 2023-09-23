@@ -32,6 +32,7 @@ func load_pics(path: String):
 			var texture = ImageTexture.create_from_image(img)
 			ret[file] = texture
 			var new_sz = ret.size()
+			self.add_item(file, texture)
 	return ret
 
 @onready var back_sel = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer5/MenuButton")
@@ -46,12 +47,13 @@ func load_self_pics():
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	load_self_pics()
-	var add_pic_button = get_node("../../HFlowContainer/Button")
-	add_pic_button.connect("added_img", Callable(self, "load_self_pics"))
-	assert(zoom_slider.value_changed.connect(update_icon_scale) == OK, "ERROR connecting signal")
 	update_icon_scale(zoom_slider.value)
 
 func update_icon_scale(val: float):
 	var int_val = int(val)
 	self.fixed_icon_size = Vector2i(int_val, int_val)
 	self.queue_redraw()
+
+
+func _on_addpicbutton_added_img():
+	load_self_pics()

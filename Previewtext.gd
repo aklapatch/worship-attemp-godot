@@ -30,10 +30,7 @@ func load_font(font_name: String):
 	self.add_theme_font_override("normal_font", new_font)
 	return OK
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass
-	
+
 func update_text_or_align(new_text: String, align: String):
 	# Add the bbcode tag depending on the alignment
 	self.text = "[p align=" + align_str + "]" + new_text + "[/p]"

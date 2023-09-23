@@ -1,5 +1,7 @@
 extends Button
 
+signal added_img()
+
 # yoinked from https://www.reddit.com/r/godot/comments/pc45q4/hacky_way_to_get_a_native_file_dialog_on_windows/
 # Give it an Array of valid PS commands
 func exec_script(ps_script : Array) -> int:
@@ -11,12 +13,7 @@ func exec_script(ps_script : Array) -> int:
 	print(ps_concat)
 	return OS.execute("powershell.exe", ["-Command", ps_concat])
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	self.connect("pressed", Callable(self, "_button_pressed"))
-	self.add_user_signal("added_img")
-
-func _button_pressed():
+func _on_pressed():
 	var dst = ProjectSettings.globalize_path("user://images/")
 	var ps_script_file = [
 	"Add-Type -AssemblyName System.Windows.Forms",
@@ -29,4 +26,4 @@ func _button_pressed():
 	if out != 0:
 		push_warning("Failed to import image")
 
-	emit_signal("added_img")
+	self.added_img.emit()
