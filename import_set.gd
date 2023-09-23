@@ -31,6 +31,5 @@ func _on_about_to_popup():
 	
 	self.get_popup().clear()
 	for set in sets:
-		self.get_popup().add_item(set['name'])
-
-	pass # Replace with function body.
+		if set != null and set.has('name'):
+			self.get_popup().add_item(set['name'])

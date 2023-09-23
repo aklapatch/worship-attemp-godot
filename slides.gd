@@ -216,7 +216,6 @@ func _on_button_clicked(item, column, id, mouse_button_index):
 	self.display_text.emit(s_words, s_font_size, s_font_align, s_font_name)
 
 func _on_button_button_up():
-	# var json_str = JSON.stringify(data_to_use)
 	var save_dir = "user://sets/"
 	var result = DirAccess.make_dir_absolute(save_dir)
 	if result != OK and result != ERR_ALREADY_EXISTS:
@@ -253,7 +252,32 @@ func _on_button_button_up():
 		f_handle.store_string(json_to_write)
 		f_handle.close()
 
-func _on_import_set_import_set(data):
+func _on_import_set_import_set(data: Dictionary):
+	# Add the slides as tree items
+	var new_set = self.create_item(root)
+	new_set.set_text(0, data['name'])
+	new_set.set_editable(0, true)
+	var default_text = load("res://push_icon.png")
+
+	# TODO: Make sure existing sets don't confict with the imported set
+	# Probably have a dialog, or renaming box to fix that
+	# Switch the slides dictionary to index by slide names instead of item ids
+	
+	var slides = data['slides']
+	for slide in slides:
+		var new_slide = self.create_item(new_set)
+		if slide_tex_and_text.has(new_slide):
+			push_error("Overwriting slide! " + new_slide)
+			slide_tex_and_text[new_slide].merge(slide, true)
+		else:
+			slide_tex_and_text[new_slide] = slide
+		new_slide.set_text(0, slide['name'])
+		new_slide.set_editable(0, true)
+		new_slide.add_button(0, default_text)
+		var icon_child = self.create_item(new_slide)
+		icon_child.set_icon(0, load("res://icon.png"))
+		icon_child.set_icon_max_width(0, 200)
+		
 	
 	pass # Replace with function body.
 
