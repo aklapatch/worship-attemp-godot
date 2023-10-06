@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://c31xclr0p2bsc"]
+[gd_scene load_steps=22 format=3 uid="uid://c31xclr0p2bsc"]
 
 [ext_resource type="Texture2D" uid="uid://c23j6o3jjhsbr" path="res://cropped-car-landscape.jpg" id="1"]
 [ext_resource type="Script" path="res://present.gd" id="1_k40w1"]
@@ -17,6 +17,8 @@
 [ext_resource type="Script" path="res://font-alignment.gd" id="12"]
 [ext_resource type="Script" path="res://background_menu.gd" id="13"]
 [ext_resource type="Script" path="res://pic_list.gd" id="14_hy2yd"]
+[ext_resource type="Script" path="res://screen_select.gd" id="15_4idhe"]
+[ext_resource type="Script" path="res://window_select.gd" id="16_o1y52"]
 
 [sub_resource type="Theme" id="3"]
 
@@ -319,6 +321,34 @@ layout_mode = 2
 text = "Select Background"
 script = ExtResource("13")
 
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.64
+
+[node name="Label" type="Label" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Present Screen"
+
+[node name="screen_select" type="OptionButton" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("15_4idhe")
+
+[node name="Label2" type="Label" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Present window mode"
+
+[node name="window_select" type="OptionButton" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+item_count = 3
+popup/item_0/text = "Windowed"
+popup/item_0/id = 0
+popup/item_1/text = "Fullscreen (Borderless)"
+popup/item_1/id = 3
+popup/item_2/text = "Exclusive Fullscreen"
+popup/item_2/id = 4
+script = ExtResource("16_o1y52")
+
 [node name="VBoxContainer" type="VBoxContainer" parent="TabContainer"]
 visible = false
 layout_mode = 2
@@ -414,6 +444,10 @@ item_1/id = 1
 [connection signal="item_selected" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer4/font_select" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer4/font_select" method="_on_item_selected"]
 [connection signal="switch_background" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer5/MenuButton" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" method="_on_menu_button_switch_background"]
 [connection signal="switch_background" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer5/MenuButton" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview" method="_on_menu_button_switch_background"]
+[connection signal="item_selected" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/VBoxContainer/screen_select" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/VBoxContainer/screen_select" method="_on_item_selected"]
+[connection signal="screen_selected" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/VBoxContainer/screen_select" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/HBoxContainer/present/dispwindow" method="_on_screen_select_screen_selected"]
+[connection signal="item_selected" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/VBoxContainer/window_select" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/VBoxContainer/window_select" method="_on_item_selected"]
+[connection signal="window_mode_sel" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/VBoxContainer/window_select" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/HBoxContainer/present/dispwindow" method="_on_window_select_window_mode_sel"]
 [connection signal="value_changed" from="TabContainer/VBoxContainer/HFlowContainer/HSlider" to="TabContainer/VBoxContainer/HFlowContainer/zoom_label" method="_on_h_slider_value_changed"]
 [connection signal="added_img" from="TabContainer/VBoxContainer/HFlowContainer/add-pic-button" to="TabContainer/VBoxContainer/ScrollContainer/pic_list" method="_on_addpicbutton_added_img"]
 [connection signal="pressed" from="TabContainer/VBoxContainer/HFlowContainer/add-pic-button" to="TabContainer/VBoxContainer/HFlowContainer/add-pic-button" method="_on_pressed"]

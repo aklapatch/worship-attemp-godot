@@ -7,9 +7,16 @@ func _ready():
 	pass # Replace with function body.
 
 func _input(event):
+	# TODO: Add arrow key bindings to go to the next and previous slide
 	if event.is_action_pressed('ui_close'):
 		self.hide()
 
 func _on_present_pressed():
 	self.show()
-	pass # Replace with function body.
+
+func _on_screen_select_screen_selected(screen_num):
+	self.current_screen = screen_num
+
+func _on_window_select_window_mode_sel(mode):
+	assert(mode == MODE_EXCLUSIVE_FULLSCREEN or mode == MODE_WINDOWED or mode == MODE_FULLSCREEN, "ERROR, bad mode %d selected" % mode)
+	self.mode = mode
