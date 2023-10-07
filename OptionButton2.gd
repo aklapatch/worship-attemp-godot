@@ -35,3 +35,15 @@ func _ready():
 
 func _on_item_selected(index: int):
 	font_changed.emit(self.get_item_text(index))
+
+
+func _on_slides_selected_slide_font_name(name :String):
+	for i in self.item_count:
+		var i_txt = self.get_item_text(i)
+		if i_txt == name:
+			self.selected = i
+			# If we don't do this, the font displayed will be out of sync with the font select box
+			font_changed.emit(self.get_item_text(i))
+			break
+		if i == self.item_count - 1:
+			push_error("Couldn't find font %s" % name)

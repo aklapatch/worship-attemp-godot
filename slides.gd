@@ -12,7 +12,7 @@ signal selected_slide_font_size(size: int)
 
 signal selected_slide_font_align(align: String)
 
-signal selected_slide_font_name(align: String)
+signal selected_slide_font_name(name: String)
 
 signal display_texture(tex_name: String)
 
@@ -178,6 +178,10 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 	# Emit the stored font size if there is one
 	if slide_tex_and_text.has(item) and slide_tex_and_text[item].has('font_align'):
 		selected_slide_font_align.emit(slide_tex_and_text[item]['font_align'])
+		
+	# Emit the stored font name if there is one
+	if slide_tex_and_text.has(item) and slide_tex_and_text[item].has('font_name'):
+		selected_slide_font_name.emit(slide_tex_and_text[item]['font_name'])
 
 # TODO: Should all the text + textures + alignment be in one place, or should each widget hold it's stuff
 # i.e., the font size widget holds the font size for every slide, the texteditor the text for every slide, etc.
