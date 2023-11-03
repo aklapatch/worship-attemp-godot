@@ -1,5 +1,7 @@
 extends Window
 
+signal select_next_slide()
+signal select_prev_slide()
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -10,6 +12,10 @@ func _input(event):
 	# TODO: Add arrow key bindings to go to the next and previous slide
 	if event.is_action_pressed('ui_close'):
 		self.hide()
+	elif event.is_action_pressed('ui_next'):
+		select_next_slide.emit()
+	elif event.is_action_pressed('ui_prev'):
+		select_prev_slide.emit()
 
 func _on_present_pressed():
 	self.show()

@@ -187,7 +187,9 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 # i.e., the font size widget holds the font size for every slide, the texteditor the text for every slide, etc.
 # I'm deciding to leave the slides holding everything because when we're saving this, it will be useful to have everything in one place
 
+var last_item_shown: TreeItem = null
 func _on_button_clicked(item, column, id, mouse_button_index):
+	last_item_shown = item
 	if item == selected_item:
 		var slide_words = text_edit.text 
 		var slide_texture = preview.texture.resource_path
@@ -291,3 +293,24 @@ func _on_menu_button_switch_background(pic_name: String):
 	if not slide_tex_and_text.has(sel_item):
 		slide_tex_and_text[sel_item] = {}
 	slide_tex_and_text[sel_item]['texture'] = pic_name
+
+func _on_dispwindow_select_next_slide():
+	var next_item: TreeItem = null
+	if last_item_shown == null:
+		# Start from the beginning if we haven't shown an item yet.
+		var r_child = root.get_first_child()
+		if r_child != null:
+			next_item = r_child.get_first_child()
+	else:
+		var last_parent = last_item_shown.get_parent()
+		next_item = last_item_shown.get_next()
+	
+	# Only show slides. If we get a slide that's a set just return
+	if next_item == null:
+		# We don't wrap around if we reach the end.
+		return
+	assert(next_item.get_parent() != root)
+	_on_button_clicked(next_item, 0, 0, 0)
+
+func _on_dispwindow_select_prev_slide():
+	pass # Replace with function body.
