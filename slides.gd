@@ -302,7 +302,6 @@ func _on_dispwindow_select_next_slide():
 		if r_child != null:
 			next_item = r_child.get_first_child()
 	else:
-		var last_parent = last_item_shown.get_parent()
 		next_item = last_item_shown.get_next()
 	
 	# Only show slides. If we get a slide that's a set just return
@@ -313,4 +312,18 @@ func _on_dispwindow_select_next_slide():
 	_on_button_clicked(next_item, 0, 0, 0)
 
 func _on_dispwindow_select_prev_slide():
-	pass # Replace with function body.
+	var next_item: TreeItem = null
+	if last_item_shown == null:
+		# Start from the beginning if we haven't shown an item yet.
+		var r_child = root.get_first_child()
+		if r_child != null:
+			next_item = r_child.get_first_child()
+	else:
+		next_item = last_item_shown.get_prev()
+	
+	# Only show slides. If we get a slide that's a set just return
+	if next_item == null:
+		# We don't wrap around if we reach the end.
+		return
+	assert(next_item.get_parent() != root)
+	_on_button_clicked(next_item, 0, 0, 0)
