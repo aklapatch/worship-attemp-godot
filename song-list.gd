@@ -11,6 +11,7 @@ func _on_hidden():
 	was_hid = true
 	pass # Replace with function body.
 
+const set_dir: String = "user://sets/"
 
 func _on_visibility_changed():
 	if was_hid == false:
@@ -20,12 +21,11 @@ func _on_visibility_changed():
 	# This is sensitive to whether the hidden signal happens before the visibility
 	# changed signal or not
 	was_hid = false
-	var save_dir = "user://sets/"
-	var dir = DirAccess.open(save_dir)
+	var dir = DirAccess.open(set_dir)
 	if not dir:
 		# Make the folder for next time
-		DirAccess.make_dir_absolute(save_dir)
-		push_error("Couldn't open %s" % save_dir)
+		DirAccess.make_dir_absolute(set_dir)
+		push_error("Couldn't open %s" % set_dir)
 		return
 
 	# Delete all the items in the tree before we add items back
@@ -35,7 +35,7 @@ func _on_visibility_changed():
 	var files = dir.get_files()
 	for file in files:
 		if file.ends_with(".json"):
-			var file_str = FileAccess.get_file_as_string(save_dir + file)
+			var file_str = FileAccess.get_file_as_string(set_dir + file)
 			var json_obj = JSON.parse_string(file_str)
 			
 			# Add one tree item per song/set. Add a button for deletion
@@ -46,4 +46,15 @@ func _on_visibility_changed():
 			var tex_img = Image.load_from_file('res://delete-icon.png')
 			var texture: Texture2D = ImageTexture.create_from_image(tex_img)
 			new_item.add_button(0, texture)
-			
+
+func _on_button_clicked(item, column, id, mouse_button_index):
+	# Delete the item whose button was clicked.
+	# This needs to be deleted on disk and on the screen too.
+	var name_to_delete: String = set_dir +  item.get_text(0) + ".json"
+	var err = DirAccess.remove_absolute(name_to_delete)
+	if err != OK:
+		push_error("Failed to delete %s" % name_to_delete)
+	# Still remove the item from the screen even if the file doesn't exist.
+	# That should be fine since the file doesn't exist on disk anyway.
+	item.free()
+	pass # Replace with function body.

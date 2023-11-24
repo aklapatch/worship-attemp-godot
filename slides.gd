@@ -294,6 +294,7 @@ func _on_menu_button_switch_background(pic_name: String):
 		slide_tex_and_text[sel_item] = {}
 	slide_tex_and_text[sel_item]['texture'] = pic_name
 
+# TODO: This doesn't go to the next set from one set to another.
 func _on_dispwindow_select_next_slide():
 	var next_item: TreeItem = null
 	if last_item_shown == null:
@@ -327,3 +328,50 @@ func _on_dispwindow_select_prev_slide():
 		return
 	assert(next_item.get_parent() != root)
 	_on_button_clicked(next_item, 0, 0, 0)
+
+func _on_servicename_save_as(service_name: String):
+	# Grab all the set names then put them in a JSON file.
+	var sets = []
+	for child in root.get_children():
+		sets.append(child.get_text(0))
+		
+	var save_dict = {'name' : service_name, 'sets' : sets}
+	var json_str = JSON.stringify(save_dict)
+	
+	const services_dir: String = "user://services/"
+	if not DirAccess.dir_exists_absolute(services_dir):
+		var err = DirAccess.make_dir_absolute(services_dir)
+		if err != OK:
+			push_error("Error %d opening %s." % [err, services_dir])
+			# Don't bother if we can't get that folder to exist.
+			return
+		
+	# Try saving anway since the folder might already exist.
+	var service_file = FileAccess.open(services_dir + service_name + '.json', FileAccess.WRITE)
+	service_file.store_string(json_str)
+	service_file.close()
+
+func _on_openservice_import_service(data):
+	# Save the current sets, then clear the data and load it.
+	_on_button_button_up()
+		
+	# Grab each set data file, then load it with an existing function
+	if data.has('sets') == false:
+		push_error("Imported service has not sets!")
+		return
+
+	for child in root.get_children():
+		child.free()
+
+	for set in data['sets']:
+		var set_file = FileAccess.open('user://sets/' + set + '.json', FileAccess.READ)
+		var set_data = set_file.get_as_text()
+		set_file.close()
+		var set_dict = JSON.parse_string(set_data)
+		_on_import_set_import_set(set_dict)
+
+func _on_saveserviceas_button_up():
+	# Save all the sets when we save the service. That makes sure the user gets
+	# The sets they expect when they load the service again.
+	_on_button_button_up()
+	pass # Replace with function body.

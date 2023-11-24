@@ -23,6 +23,6 @@ func _on_present_pressed():
 func _on_screen_select_screen_selected(screen_num):
 	self.current_screen = screen_num
 
-func _on_window_select_window_mode_sel(mode):
-	assert(mode == MODE_EXCLUSIVE_FULLSCREEN or mode == MODE_WINDOWED or mode == MODE_FULLSCREEN, "ERROR, bad mode %d selected" % mode)
-	self.mode = mode
+func _on_window_select_window_mode_sel(new_mode):
+	assert(new_mode == MODE_EXCLUSIVE_FULLSCREEN or new_mode == MODE_WINDOWED or new_mode == MODE_FULLSCREEN, "ERROR, bad mode %d selected" % mode)
+	self.mode = new_mode

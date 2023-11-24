@@ -54,6 +54,5 @@ func update_icon_scale(val: float):
 	self.fixed_icon_size = Vector2i(int_val, int_val)
 	self.queue_redraw()
 
-
 func _on_addpicbutton_added_img():
 	load_self_pics()
