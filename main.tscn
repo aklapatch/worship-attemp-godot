@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://c31xclr0p2bsc"]
+[gd_scene load_steps=29 format=3 uid="uid://c31xclr0p2bsc"]
 
 [ext_resource type="Texture2D" uid="uid://c23j6o3jjhsbr" path="res://cropped-car-landscape.jpg" id="1"]
 [ext_resource type="Script" path="res://present.gd" id="1_k40w1"]
@@ -11,9 +11,12 @@
 [ext_resource type="Script" path="res://displaytext.gd" id="5_jeqqi"]
 [ext_resource type="Script" path="res://FontSize.gd" id="6"]
 [ext_resource type="Script" path="res://import_set.gd" id="6_cip5m"]
+[ext_resource type="Texture2D" uid="uid://c5febh4e0htqc" path="res://delete-icon.png" id="6_f3h7c"]
+[ext_resource type="Script" path="res://fader-disp-texture.gd" id="7_8dyw3"]
 [ext_resource type="Script" path="res://service-name.gd" id="7_prdjr"]
 [ext_resource type="Script" path="res://slideTextEdit.gd" id="8"]
 [ext_resource type="Script" path="res://open-service.gd" id="8_o8scn"]
+[ext_resource type="Script" path="res://displaytext-2.gd" id="8_r4njn"]
 [ext_resource type="Script" path="res://OptionButton2.gd" id="9"]
 [ext_resource type="Script" path="res://Previewtext.gd" id="10"]
 [ext_resource type="Script" path="res://font-alignment.gd" id="12"]
@@ -151,6 +154,33 @@ scroll_active = false
 meta_underlined = false
 hint_underlined = false
 script = ExtResource("5_jeqqi")
+
+[node name="fader-disp-texture" type="TextureRect" parent="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/HBoxContainer/present/dispwindow/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_f3h7c")
+expand_mode = 2
+stretch_mode = 5
+script = ExtResource("7_8dyw3")
+
+[node name="displaytext-2" type="RichTextLabel" parent="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/HBoxContainer/present/dispwindow/Control/fader-disp-texture"]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+meta_underlined = false
+hint_underlined = false
+script = ExtResource("8_r4njn")
 
 [node name="save" type="Button" parent="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -446,7 +476,9 @@ script = ExtResource("21_2d47f")
 [connection signal="import_service" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/HFlowContainer/open-service" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" method="_on_openservice_import_service"]
 [connection signal="button_clicked" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" method="_on_button_clicked"]
 [connection signal="display_text" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/HBoxContainer/present/dispwindow/Control/displayedtexture/displaytext" method="_on_slides_display_text"]
+[connection signal="display_text" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/HBoxContainer/present/dispwindow/Control/fader-disp-texture/displaytext-2" method="_on_slides_display_text"]
 [connection signal="display_texture" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/HBoxContainer/present/dispwindow/Control/displayedtexture" method="_on_slides_display_texture"]
+[connection signal="display_texture" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/HBoxContainer/present/dispwindow/Control/fader-disp-texture" method="_on_slides_display_texture"]
 [connection signal="item_selected" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit" method="_on_slides_item_selected"]
 [connection signal="multi_selected" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" method="_on_multi_selected"]
 [connection signal="nothing_selected" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit" method="_on_slides_nothing_selected"]

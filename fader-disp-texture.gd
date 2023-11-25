@@ -3,8 +3,10 @@ extends TextureRect
 @onready var pic_node = get_node('/root/Control/TabContainer/VBoxContainer/ScrollContainer/pic_list')
 @onready var default_mod = self.self_modulate
 
-@onready var last_texture = ""
+func _ready():
+	self.self_modulate = Color.TRANSPARENT
 
+@onready var last_texture = ""
 func _on_slides_display_texture(texture: String):
 	if texture == last_texture:
 		# Return so we don't fade the textures out
@@ -12,7 +14,7 @@ func _on_slides_display_texture(texture: String):
 		return
 		
 	last_texture = texture
-
+	
 	var mod_tween = self.create_tween()
 	# We use two texture rects to fade between the two textures
 	# If we're not transparent, we just fade to transparent.
@@ -21,9 +23,9 @@ func _on_slides_display_texture(texture: String):
 		self.texture = pic_node.pic_by_names[texture]
 		# Make sure we stay transparent after we take the new texture.
 		self.self_modulate = Color.TRANSPARENT
-		mod_tween.tween_property(self, "self_modulate", default_mod, .5).set_trans(Tween.TRANS_LINEAR)
+		mod_tween.tween_property(self, "self_modulate", default_mod, .5)
 	elif self.self_modulate == default_mod:
 		# Only fade out
-		mod_tween.tween_property(self, "self_modulate", Color.TRANSPARENT, .5).set_trans(Tween.TRANS_LINEAR)
+		mod_tween.tween_property(self, "self_modulate", Color.TRANSPARENT, .5)
 	else:
 		push_error("Bad modulate value %v" % self.self_modulate)

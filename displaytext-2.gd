@@ -5,7 +5,11 @@ func get_font(font_name: String):
 
 	return load(font_name)
 	
-@onready var default_mod = self.self_modulate
+@onready var default_mod = self.modulate
+
+func _ready():
+	default_mod = self.self_modulate
+	self.self_modulate = Color.TRANSPARENT
 
 func _on_slides_display_text(words, font_size, font_align, font):
 	var tween = self.create_tween()
@@ -44,5 +48,3 @@ func _on_slides_display_text(words, font_size, font_align, font):
 		# IMO, I won't do that for now.
 		var adjusted_font_size = get_parent().size.y * (float(font_size)/100.0)
 		self.add_theme_font_size_override("normal_font_size", int(adjusted_font_size))
-		
-	
