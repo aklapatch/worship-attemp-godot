@@ -16,7 +16,7 @@ func _on_slides_display_text(words, font_size, font_align, font):
 		# We don't need to set the text if we're fading out. return to avoid that.
 		return
 	else:
-		push_error("Bad self modulate value %v" % self.self_modulate)
+		push_error("Bad self modulate value {}" % self.self_modulate)
 
 	if words == null:
 		words = ""
