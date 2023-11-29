@@ -6,6 +6,7 @@ func get_font(font_name: String):
 	return load(font_name)
 	
 @onready var default_mod = self.modulate
+@onready var told_to_hide = true
 
 func _ready():
 	default_mod = self.self_modulate
@@ -13,14 +14,14 @@ func _ready():
 
 func _on_slides_display_text(words, font_size, font_align, font):
 	var tween = self.create_tween()
-	if self.self_modulate == Color.TRANSPARENT:
+	if told_to_hide:
 		tween.tween_property(self, "self_modulate", default_mod, .5).set_trans(Tween.TRANS_LINEAR)
-	elif self.self_modulate == default_mod:
+		told_to_hide = false
+	elif not told_to_hide:
 		tween.tween_property(self, "self_modulate", Color.TRANSPARENT, .5).set_trans(Tween.TRANS_LINEAR)
+		told_to_hide = true
 		# We don't need to set the text if we're fading out. return to avoid that.
 		return
-	else:
-		push_error("Bad self modulate value {}" % self.self_modulate)
 
 	if words == null:
 		words = ""

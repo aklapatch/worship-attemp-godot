@@ -305,7 +305,13 @@ func _on_dispwindow_select_next_slide():
 	else:
 		next_item = last_item_shown.get_next()
 	
-	# Only show slides. If we get a slide that's a set just return
+	# Only show slides. If we get a slide that's a set see if we can get to the next set
+	if next_item == null:
+		var last_parent = last_item_shown.get_parent()
+		var next_set = last_parent.get_next()
+		if next_set != null:
+			next_item = next_set.get_first_child()
+		
 	if next_item == null:
 		# We don't wrap around if we reach the end.
 		return
@@ -322,6 +328,13 @@ func _on_dispwindow_select_prev_slide():
 	else:
 		next_item = last_item_shown.get_prev()
 	
+	# Only show slides. If we get a slide that's a set see if we can get to the next set
+	if next_item == null:
+		var last_parent = last_item_shown.get_parent()
+		var next_set = last_parent.get_prev()
+		if next_set != null:
+			next_item = next_set.get_child(-1)
+
 	# Only show slides. If we get a slide that's a set just return
 	if next_item == null:
 		# We don't wrap around if we reach the end.
