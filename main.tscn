@@ -227,6 +227,15 @@ drop_mode_flags = 2
 select_mode = 2
 script = ExtResource("2_slv3w")
 
+[node name="ConfirmationDialog" type="ConfirmationDialog" parent="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides"]
+process_thread_group = 2
+process_thread_group_order = 0
+process_thread_messages = 1
+initial_position = 2
+popup_window = true
+dialog_text = "This sets already exists in your set list. Is it ok to overwrite it?"
+dialog_close_on_escape = false
+
 [node name="VSplitContainer" type="VSplitContainer" parent="TabContainer/HBoxContainer/HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -490,6 +499,7 @@ script = ExtResource("21_2d47f")
 [connection signal="selected_slide_font_size" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer3/FontSize" method="_on_slides_selected_slide_font_size"]
 [connection signal="selected_slide_text" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit" method="_on_slides_selected_slide_text"]
 [connection signal="treeitem_selected" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit" method="_on_slides_treeitem_selected"]
+[connection signal="confirmed" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides/ConfirmationDialog" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" method="_on_confirmation_dialog_confirmed"]
 [connection signal="item_rect_changed" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview" method="_on_sub_viewport_container_item_rect_changed"]
 [connection signal="item_rect_changed" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview/Previewtext" method="_on_preview_item_rect_changed"]
 [connection signal="text_changed" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit" method="_on_text_changed"]

@@ -258,17 +258,19 @@ func _on_button_button_up():
 		f_handle.store_string(json_to_write)
 		f_handle.close()
 
-func _on_import_set_import_set(data: Dictionary):
+
+func make_set_slides(data: Dictionary):
 	# Add the slides as tree items
+	# TODO: Delete the set that we're replacing if that set exists.
+	# The user should have confirmed the import before this point.
+	for item in root.get_children():
+		if item.get_text(0) == data['name']:
+			item.free()
 	var new_set = self.create_item(root)
 	new_set.set_text(0, data['name'])
 	new_set.set_editable(0, true)
 	var default_text = load("res://push_icon.png")
 
-	# TODO: Make sure existing sets don't confict with the imported set
-	# Probably have a dialog, or renaming box to fix that
-	# Switch the slides dictionary to index by slide names instead of item ids
-	
 	var slides = data['slides']
 	for slide in slides:
 		var new_slide = self.create_item(new_set)
@@ -285,6 +287,28 @@ func _on_import_set_import_set(data: Dictionary):
 		icon_child.set_selectable(0, false)
 		icon_child.set_editable(0, false)
 		icon_child.set_icon_max_width(0, 200)
+
+# NOTE: I tried to have the signal function that loads the slides block until the
+# accpetance dialog was closed, but stopped the whole program. It seems like signals
+# can't block. That will probably bit me later. That's why I have to queue the imported
+# data in a global variable. There's probably a better way to do this, but I don't
+# know what it is right now.
+var queued_import = null
+func _on_import_set_import_set(data: Dictionary):
+
+	# TODO: Make sure existing sets don't confict with the imported set
+	# Probably have a dialog, or renaming box to fix that
+	# Switch the slides dictionary to index by slide names instead of item ids
+	var set_name = data['name']
+	for item in root.get_children():
+		if item.get_text(0) == set_name:
+			var conf_dialog = self.get_child(0)
+			# If this is confirmed, another function will import this.
+			queued_import = data
+			conf_dialog.show()
+			return
+				
+	make_set_slides(data)
 
 func _on_menu_button_switch_background(pic_name: String):
 	var sel_item = self.get_selected()
@@ -388,3 +412,8 @@ func _on_saveserviceas_button_up():
 	# The sets they expect when they load the service again.
 	_on_button_button_up()
 	pass # Replace with function body.
+
+
+func _on_confirmation_dialog_confirmed():
+	assert(queued_import != null, "This should be set before confirming an import")
+	make_set_slides(queued_import)
