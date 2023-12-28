@@ -3,13 +3,12 @@ extends OptionButton
 signal font_changed(font_name: String)
 
 func load_font_names(path: String):
-	var dir = DirAccess.open(path)
-	var err = dir.make_dir_recursive(path)
+	var err = DirAccess.make_dir_recursive_absolute(path)
 	var output = []
 	if err != OK:
-		print("Error %u opening %s" % err, OK)
+		print("Error %u making %s" % err, path)
 		return
-		
+	var dir = DirAccess.open(path)
 	var files = dir.get_files()
 	for file in files:
 		if file.ends_with('.ttf'):

@@ -10,12 +10,13 @@ signal loaded_pics(pics_names: Dictionary)
 # TODO: add a way to delete pictures
 
 func load_pics(path: String):
-	var dir = DirAccess.open(path)
-	var err = dir.make_dir_recursive(path)
+
+	var err = DirAccess.make_dir_recursive_absolute(path)
 	if err != OK:
-		print("Error %u opening %s" % err, OK)
+		print("Error %u opening %s" % err, path)
 		return
-		
+	
+	var dir = DirAccess.open(path)
 	var img_path = ProjectSettings.globalize_path(path)	
 	var files = dir.get_files()
 	var ret: Dictionary = {}
