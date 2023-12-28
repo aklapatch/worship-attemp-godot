@@ -23,9 +23,9 @@ func _on_slides_display_texture(texture: String):
 		self.texture = pic_node.pic_by_names[texture]
 		# Make sure we stay transparent after we take the new texture.
 		self.self_modulate = Color.TRANSPARENT
-		mod_tween.tween_property(self, "self_modulate", default_mod, .5)
+		mod_tween.tween_property(self, "self_modulate", default_mod, .25)
 	elif self.self_modulate == default_mod:
 		# Only fade out
-		mod_tween.tween_property(self, "self_modulate", Color.TRANSPARENT, .5)
+		mod_tween.tween_property(self, "self_modulate", Color.TRANSPARENT, .25)
 	else:
 		push_error("Bad modulate value %v" % self.self_modulate)
