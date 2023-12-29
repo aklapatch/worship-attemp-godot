@@ -258,7 +258,6 @@ func _on_button_button_up():
 		f_handle.store_string(json_to_write)
 		f_handle.close()
 
-
 func make_set_slides(data: Dictionary):
 	# Add the slides as tree items
 	# TODO: Delete the set that we're replacing if that set exists.
@@ -287,6 +286,16 @@ func make_set_slides(data: Dictionary):
 		icon_child.set_selectable(0, false)
 		icon_child.set_editable(0, false)
 		icon_child.set_icon_max_width(0, 200)
+		
+		# Select the slide so that the preview loads
+		# revert the slected slide to the original
+		var cur_selected = self.get_selected()
+		# Set the texture for this dictionary so that the on_multi_selected()
+		# doesn't select the currently selected background.
+		slide_tex_and_text[new_slide].merge(slide, true)
+		_on_multi_selected(new_slide, 0, true)
+		if cur_selected != null:
+			_on_multi_selected(cur_selected, 0, true)
 
 # NOTE: I tried to have the signal function that loads the slides block until the
 # accpetance dialog was closed, but stopped the whole program. It seems like signals
@@ -295,7 +304,6 @@ func make_set_slides(data: Dictionary):
 # know what it is right now.
 var queued_import = null
 func _on_import_set_import_set(data: Dictionary):
-
 	# TODO: Make sure existing sets don't confict with the imported set
 	# Probably have a dialog, or renaming box to fix that
 	# Switch the slides dictionary to index by slide names instead of item ids
@@ -307,7 +315,6 @@ func _on_import_set_import_set(data: Dictionary):
 			queued_import = data
 			conf_dialog.show()
 			return
-				
 	make_set_slides(data)
 
 func _on_menu_button_switch_background(pic_name: String):
