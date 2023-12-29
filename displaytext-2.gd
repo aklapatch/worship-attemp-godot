@@ -4,40 +4,40 @@ func get_font(font_name: String):
 		return null
 
 	return load(font_name)
-	
-@onready var default_mod = self.modulate
+
 @onready var told_to_hide = true
 @onready var old_font_size = 0
 @onready var old_font = ""
+@onready var old_bbcode = ""
 
 func _ready():
-	default_mod = self.self_modulate
 	self.self_modulate = Color.TRANSPARENT
 
 func _on_slides_display_text(words, font_size, font_align, font):
-	# Don't do anything if we're getting the same inputs are before
-	var new_bbcode = "[p align=" + font_align.to_lower() + "]" + words + "[/p]"
-	if new_bbcode == self.text and old_font_size == font_size and old_font == font:
-		return
-	old_font_size = font_size
-	old_font = font
-
-	var tween = self.create_tween()
-	if told_to_hide:
-		tween.tween_property(self, "self_modulate", default_mod, .5).set_trans(Tween.TRANS_LINEAR)
-		told_to_hide = false
-	elif not told_to_hide:
-		tween.tween_property(self, "self_modulate", Color.TRANSPARENT, .5).set_trans(Tween.TRANS_LINEAR)
-		told_to_hide = true
-		# We don't need to set the text if we're fading out. return to avoid that.
-		return
-
 	if words == null:
 		words = ""
 	if font_align == null:
 		font_align = "center"
+
+	# Don't do anything if we're getting the same inputs are before
+	var new_bbcode = "[p align=" + font_align.to_lower() + "]" + words + "[/p]"
+	if new_bbcode == old_bbcode and old_font_size == font_size and old_font == font:
+		return
 		
-	self.text = new_bbcode
+	old_font = font
+	old_font_size = font_size
+	old_bbcode = new_bbcode
+ 
+	var tween = self.create_tween()
+	if told_to_hide:
+		tween.tween_property(self, "self_modulate", Color.WHITE, .25).set_trans(Tween.TRANS_LINEAR)
+		told_to_hide = false
+		self.text = new_bbcode
+	elif told_to_hide == false:
+		tween.tween_property(self, "self_modulate", Color.TRANSPARENT, .25).set_trans(Tween.TRANS_LINEAR)
+		told_to_hide = true
+		# We don't need to set the text here.
+		return
 	
 	if font != null:
 		var new_font = get_font("res://%s" % font)
