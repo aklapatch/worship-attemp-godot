@@ -15,6 +15,10 @@ signal update_align(align_id: int)
 
 @onready var curr_text = ""
 
+func _ready():
+	print(self.layout_mode)
+	print(self.anchors_preset)
+
 # Load new font
 func load_font(font_name: String):
 	if not FileAccess.file_exists(font_name):

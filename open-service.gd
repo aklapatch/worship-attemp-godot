@@ -11,10 +11,6 @@ func emit_service(index: int):
 func _ready():
 	self.get_popup().connect("index_pressed", Callable(self, "emit_service"))
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
-
 func _on_about_to_popup():
 	const save_dir = "user://services/"
 	var dir = DirAccess.open(save_dir)

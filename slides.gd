@@ -21,6 +21,8 @@ signal display_text(words: String, font_size: int, font_align: String, font_name
 # Stores the text for the slide, the alignment, and the texture
 var slide_tex_and_text = {}
 
+const icon_t_item = preload("res://cust_treeitem.gd")
+
 # TODO: Set deletion
 @onready var root = self.create_item()
 @onready var pic_list_node = get_node('/root/Control/TabContainer/VBoxContainer/ScrollContainer/pic_list')
@@ -260,16 +262,20 @@ func _on_button_button_up():
 
 func make_set_slides(data: Dictionary):
 	# Add the slides as tree items
-	# TODO: Delete the set that we're replacing if that set exists.
-	# The user should have confirmed the import before this point.
+	var new_set = null
 	for item in root.get_children():
 		if item.get_text(0) == data['name']:
-			item.free()
-	var new_set = self.create_item(root)
+			# Free the children, so we can re-use the set node.
+			for child in item.get_children():
+				child.free()
+			new_set = item
+
+	if new_set == null:
+		new_set = self.create_item(root)
 	new_set.set_text(0, data['name'])
 	new_set.set_editable(0, true)
 	var default_text = load("res://push_icon.png")
-
+	
 	var slides = data['slides']
 	for slide in slides:
 		var new_slide = self.create_item(new_set)
@@ -281,21 +287,53 @@ func make_set_slides(data: Dictionary):
 		new_slide.set_text(0, slide['name'])
 		new_slide.set_editable(0, true)
 		new_slide.add_button(0, default_text)
-		var icon_child = self.create_item(new_slide)
-		icon_child.set_icon(0, load("res://icon.png"))
+		# use our custom item so that its viewport will automatically be freed when
+		# it is deleted
+		# TODO: Attach more data to the icon item, like the font type, size,
+		# etc. That will help delete extra data when we free the icon
+		# That way we don't need to free it from the dictionary manually 
+		var icon_child = new_slide.create_child()
 		icon_child.set_selectable(0, false)
 		icon_child.set_editable(0, false)
-		icon_child.set_icon_max_width(0, 200)
+
+		# Set up the parameters for the icon's viewport
+		var vp = SubViewport.new()
+		vp.disable_3d = true
+		vp.size = Vector2(200, 113)
+		var t_rect = TextureRect.new()
+		t_rect.size = vp.size
+		t_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		t_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		t_rect.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		t_rect.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		t_rect.texture = pic_list_node.pic_by_names[slide['texture']]
 		
-		# Select the slide so that the preview loads
-		# revert the slected slide to the original
-		var cur_selected = self.get_selected()
+		var rtl = RichTextLabel.new()
+		rtl.bbcode_enabled = true
+		rtl.fit_content = true
+		rtl.scroll_active = false
+		rtl.clip_contents = true
+		rtl.set_anchors_preset(Control.PRESET_HCENTER_WIDE)
+		# HACK: Setting the anchors preset should set this to one, but it doesn't
+		# the enum for this isn't exported, so we need to do this manually for now.
+		rtl.layout_mode = 1
+		# Add the bbcode tag depending on the alignment
+		rtl.text = "[p align=" + slide['font_align'].to_lower() + "]" + slide['words'] + "[/p]"
+		
+		t_rect.add_child(rtl)
+		vp.add_child(t_rect)
+		var grp = icon_child.to_string()
+		vp.add_to_group(grp)
+		# This vp needs to be a child or it won't render.
+		self.add_child(vp)
+		
+		# Set the preview then capture its texture so we can use it as a preview
+		
 		# Set the texture for this dictionary so that the on_multi_selected()
 		# doesn't select the currently selected background.
 		slide_tex_and_text[new_slide].merge(slide, true)
-		_on_multi_selected(new_slide, 0, true)
-		if cur_selected != null:
-			_on_multi_selected(cur_selected, 0, true)
+		icon_child.set_icon(0, vp.get_texture())
+		icon_child.set_icon_max_width(0, 200)
 
 # NOTE: I tried to have the signal function that loads the slides block until the
 # accpetance dialog was closed, but stopped the whole program. It seems like signals
