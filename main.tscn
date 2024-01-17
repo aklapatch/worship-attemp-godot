@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://c31xclr0p2bsc"]
+[gd_scene load_steps=29 format=3 uid="uid://c31xclr0p2bsc"]
 
 [ext_resource type="Texture2D" uid="uid://c23j6o3jjhsbr" path="res://cropped-car-landscape.jpg" id="1"]
 [ext_resource type="Script" path="res://present.gd" id="1_k40w1"]
@@ -26,26 +26,11 @@
 [ext_resource type="Script" path="res://window_select.gd" id="16_o1y52"]
 [ext_resource type="Script" path="res://song-list.gd" id="20_7fkgo"]
 [ext_resource type="Script" path="res://service-list.gd" id="21_2d47f"]
-[ext_resource type="Script" path="res://Treetest.gd" id="27_3g1b1"]
 
 [sub_resource type="Theme" id="3"]
 
 [sub_resource type="GDScript" id="1"]
 script/source = "extends TextureRect
-
-@onready var pic_node = get_node('/root/Control/TabContainer/VBoxContainer/ScrollContainer/pic_list')
-
-func _on_menu_button_switch_background(pic_name: String):
-	self.texture = pic_node.pic_by_names[pic_name]
-
-func _on_sub_viewport_container_item_rect_changed():
-	var view_container = get_node(\"../../../SubViewportContainer\")
-	self.set_size(view_container.get_size())
-
-@onready var tex_select = get_node('/root/Control/TabContainer/VBoxContainer/ScrollContainer/pic_list')
-func _on_slides_selected_slide_background(background: String):
-	# match the name with the texture in this node:
-	self.texture = pic_node.pic_by_names[background]
 "
 
 [node name="Control" type="Control"]
@@ -72,10 +57,8 @@ offset_right = -15.0
 offset_bottom = -7.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-current_tab = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="TabContainer"]
-visible = false
 layout_mode = 2
 
 [node name="HSplitContainer" type="HSplitContainer" parent="TabContainer/HBoxContainer"]
@@ -249,22 +232,8 @@ layout_mode = 2
 size_flags_vertical = 3
 ratio = 1.7778
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer"]
+[node name="Preview" type="TextureRect" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer"]
 layout_mode = 2
-size_flags_vertical = 3
-stretch = true
-
-[node name="SubViewport" type="SubViewport" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer"]
-disable_3d = true
-handle_input_locally = false
-gui_embed_subwindows = true
-size = Vector2i(8, 4)
-render_target_update_mode = 0
-
-[node name="Preview" type="TextureRect" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport"]
-offset_left = -0.281097
-offset_right = 531.281
-offset_bottom = 299.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = SubResource("3")
@@ -273,7 +242,7 @@ expand_mode = 1
 stretch_mode = 5
 script = SubResource("1")
 
-[node name="Previewtext" type="RichTextLabel" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview"]
+[node name="Previewtext" type="RichTextLabel" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/Preview"]
 layout_mode = 1
 anchors_preset = 14
 anchor_top = 0.5
@@ -283,11 +252,9 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-focus_mode = 2
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
-selection_enabled = true
 script = ExtResource("10")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer"]
@@ -473,30 +440,6 @@ size_flags_horizontal = 3
 hide_root = true
 script = ExtResource("21_2d47f")
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="TabContainer"]
-layout_mode = 2
-
-[node name="Tree" type="Tree" parent="TabContainer/HBoxContainer2"]
-layout_mode = 2
-size_flags_horizontal = 3
-script = ExtResource("27_3g1b1")
-
-[node name="SubViewport" type="SubViewport" parent="TabContainer/HBoxContainer2/Tree"]
-handle_input_locally = false
-render_target_update_mode = 4
-
-[node name="TextureRect" type="TextureRect" parent="TabContainer/HBoxContainer2/Tree/SubViewport"]
-offset_right = 40.0
-offset_bottom = 40.0
-texture = ExtResource("3_puecm")
-
-[node name="RichTextLabel" type="RichTextLabel" parent="TabContainer/HBoxContainer2/Tree/SubViewport/TextureRect"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-bbcode_enabled = true
-text = "test"
-
 [connection signal="pressed" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/HBoxContainer/new_slide" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" method="_on_new_slide_pressed"]
 [connection signal="pressed" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/HBoxContainer/new_set" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" method="_on_new_set_pressed"]
 [connection signal="pressed" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/HBoxContainer/present" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/HBoxContainer/present/dispwindow" method="_on_present_pressed"]
@@ -520,24 +463,23 @@ text = "test"
 [connection signal="item_selected" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit" method="_on_slides_item_selected"]
 [connection signal="multi_selected" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" method="_on_multi_selected"]
 [connection signal="nothing_selected" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit" method="_on_slides_nothing_selected"]
-[connection signal="selected_slide_background" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview" method="_on_slides_selected_slide_background"]
+[connection signal="selected_slide_background" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/Preview" method="_on_slides_selected_slide_background"]
 [connection signal="selected_slide_font_align" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer2/align_select" method="_on_slides_selected_slide_font_align"]
 [connection signal="selected_slide_font_name" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer4/font_select" method="_on_slides_selected_slide_font_name"]
 [connection signal="selected_slide_font_size" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer3/FontSize" method="_on_slides_selected_slide_font_size"]
 [connection signal="selected_slide_text" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit" method="_on_slides_selected_slide_text"]
 [connection signal="treeitem_selected" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit" method="_on_slides_treeitem_selected"]
 [connection signal="confirmed" from="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides/ConfirmationDialog" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" method="_on_confirmation_dialog_confirmed"]
-[connection signal="item_rect_changed" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview" method="_on_sub_viewport_container_item_rect_changed"]
-[connection signal="item_rect_changed" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview/Previewtext" method="_on_preview_item_rect_changed"]
+[connection signal="item_rect_changed" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/Preview" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/Preview/Previewtext" method="_on_preview_item_rect_changed"]
 [connection signal="text_changed" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit" method="_on_text_changed"]
-[connection signal="text_update" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview/Previewtext" method="_on_text_edit_text_update"]
-[connection signal="align_selected" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer2/align_select" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview/Previewtext" method="_on_align_select_align_selected"]
+[connection signal="text_update" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" method="_on_text_edit_text_update"]
+[connection signal="text_update" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/Preview/Previewtext" method="_on_text_edit_text_update"]
+[connection signal="align_selected" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer2/align_select" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/Preview/Previewtext" method="_on_align_select_align_selected"]
 [connection signal="item_selected" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer2/align_select" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer2/align_select" method="_on_item_selected"]
-[connection signal="value_changed" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer3/FontSize" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview/Previewtext" method="_on_font_size_value_changed"]
-[connection signal="font_changed" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer4/font_select" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview/Previewtext" method="_on_font_select_font_changed"]
+[connection signal="value_changed" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer3/FontSize" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/Preview/Previewtext" method="_on_font_size_value_changed"]
+[connection signal="font_changed" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer4/font_select" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/Preview/Previewtext" method="_on_font_select_font_changed"]
 [connection signal="item_selected" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer4/font_select" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer4/font_select" method="_on_item_selected"]
 [connection signal="switch_background" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer5/MenuButton" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/ScrollContainer/slides" method="_on_menu_button_switch_background"]
-[connection signal="switch_background" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer5/MenuButton" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview" method="_on_menu_button_switch_background"]
 [connection signal="item_selected" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/VBoxContainer/screen_select" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/VBoxContainer/screen_select" method="_on_item_selected"]
 [connection signal="screen_selected" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/VBoxContainer/screen_select" to="TabContainer/HBoxContainer/HSplitContainer/VBoxContainer/HBoxContainer/present/dispwindow" method="_on_screen_select_screen_selected"]
 [connection signal="item_selected" from="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/VBoxContainer/window_select" to="TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/VBoxContainer/window_select" method="_on_item_selected"]

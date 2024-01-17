@@ -37,6 +37,10 @@ func _process(delta):
 	if Input.is_action_pressed("ui_delete"):
 		# Remove the selected child if one is selected
 		var selected = self.get_selected()
+		# try to delete the preview viewport
+		var prev_node = get_tree().get_first_node_in_group(selected.to_string())
+		assert(prev_node != null)
+		prev_node.free()
 		if selected != null:
 			selected.free()
 
@@ -85,6 +89,52 @@ func _on_new_slide_pressed():
 	text_slide.set_selectable(0, false)
 	text_slide.set_selectable(1, false)
 	
+	# Set up the parameters for the icon's viewport
+	var vp = SubViewport.new()
+	vp.disable_3d = true
+	vp.size = Vector2(200, 113)
+	var t_rect = TextureRect.new()
+	t_rect.size = vp.size
+	t_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	t_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	t_rect.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	t_rect.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	t_rect.texture = default_background
+		
+	var rtl = RichTextLabel.new()
+	rtl.bbcode_enabled = true
+	rtl.fit_content = true
+	rtl.scroll_active = false
+	rtl.clip_contents = true
+	rtl.set_anchors_preset(Control.PRESET_HCENTER_WIDE)
+	# HACK: Setting the anchors preset should set this to one, but it doesn't
+	# the enum for this isn't exported, so we need to do this manually for now.
+	rtl.layout_mode = 1
+	var cur_font_name = font_name.get_item_text(font_name.selected)
+	var cur_font = font_name.all_fonts[cur_font_name]
+	rtl.add_theme_font_override("normal_font", cur_font)
+			
+	# TODO: calculate font size based on size of the icon/window
+	rtl.add_theme_font_size_override("normal_font_size", font_size.value)
+
+	# Add the bbcode tag depending on the alignment
+	var cur_align = font_align.get_item_text(font_align.selected).to_lower()
+	rtl.text = "[p align=" + cur_align + "][/p]"
+		
+	t_rect.add_child(rtl)
+	vp.add_child(t_rect)
+	# The title is what actually is selected. That means the title needs to be the group
+	# UID since we look up the group by what was selected.
+	var grp = new_slide.to_string()
+	vp.add_to_group(grp)
+	# This vp needs to be a child or it won't render.
+	self.add_child(vp)
+		
+	# Set the texture for this dictionary so that the on_multi_selected()
+	# doesn't select the currently selected background.
+	text_slide.set_icon(0, vp.get_texture())
+	text_slide.set_icon_max_width(0, 200)
+	
 	# Pre-populate the dictionary in case we need to save later
 	var slide_words = ""
 	var slide_texture = null
@@ -101,16 +151,12 @@ func _on_new_slide_pressed():
 
 var selected_item: TreeItem = null
 
-@onready var view_port = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport")
-@onready var preview = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview")
-@onready var preview_text = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/AspectRatioContainer/SubViewportContainer/SubViewport/Preview/Previewtext")
 @onready var font_size = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer3/FontSize")
 @onready var font_align = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer2/align_select")
 @onready var text_edit = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/TextEdit")
 @onready var font_name = get_node("/root/Control/TabContainer/HBoxContainer/HSplitContainer/VSplitContainer/ScrollContainer/HBoxContainer/HFlowContainer/VBoxContainer4/font_select")
 
 func _on_multi_selected(item: TreeItem, column: int, selected: bool):
-	
 	if selected == false:
 		return
 		
@@ -134,8 +180,11 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 		# - The font size
 		# - The text alignment
 		if selected_item != item:
-			var slide_words = text_edit.text 
-			var slide_texture = preview.texture.resource_path
+			var slide_words = text_edit.text
+			var prev_node = get_tree().get_first_node_in_group(selected_item.to_string())
+			assert(prev_node != null)
+			var t_tex_node = prev_node.get_child(0)
+			var slide_texture = t_tex_node.texture.resource_path
 			var s_font_size = font_size.value
 			var s_font_align = font_align.get_item_text(font_align.selected)
 			var s_font_name = font_name.get_item_text(font_name.selected)
@@ -154,9 +203,6 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 	if is_set:
 		return
 		
-	# Set the slide texture to be the viewport
-	item.get_first_child().set_icon(0, view_port.get_texture())
-	item.get_first_child().set_icon_max_width(0, 200)
 		
 	# Otherwise, emit the signal. Make sure that we get the slide's text
 	slide_treeitem_selected.emit(item if item.get_child_count() == 0 else item.get_first_child())
@@ -192,21 +238,7 @@ func _on_multi_selected(item: TreeItem, column: int, selected: bool):
 var last_item_shown: TreeItem = null
 func _on_button_clicked(item, column, id, mouse_button_index):
 	last_item_shown = item
-	if item == selected_item:
-		var slide_words = text_edit.text 
-		var slide_texture = preview.texture.resource_path
-		var s_font_size = font_size.value
-		var s_font_align = font_align.get_item_text(font_align.selected)
-		var s_font_name = font_name.get_item_text(font_name.selected)
-		
-		self.display_texture.emit(slide_tex_and_text[item]['texture'])
-		self.display_text.emit(slide_words, s_font_size, s_font_align, s_font_name)
-		return
 
-	# Grab the texture from this item and emit it as a signal
-	var emitted_tex = slide_tex_and_text[item]['texture']
-	self.display_texture.emit(emitted_tex)
-	
 	# Get all the info and emit it if we have it
 	var s_words = null
 	if slide_tex_and_text.has(item) and slide_tex_and_text[item].has('words'):
@@ -317,17 +349,26 @@ func make_set_slides(data: Dictionary):
 		# HACK: Setting the anchors preset should set this to one, but it doesn't
 		# the enum for this isn't exported, so we need to do this manually for now.
 		rtl.layout_mode = 1
+		var s_font_name = slide['font_name']
+		if s_font_name in font_name.all_fonts:
+			var actual_font = font_name.all_fonts[s_font_name]
+			rtl.add_theme_font_override("normal_font", actual_font)
+		else:
+			push_error("Font: %s doesn't exist!" % font_name)
+			
+		rtl.add_theme_font_size_override("normal_font_size", slide['font_size'])
+
 		# Add the bbcode tag depending on the alignment
 		rtl.text = "[p align=" + slide['font_align'].to_lower() + "]" + slide['words'] + "[/p]"
 		
 		t_rect.add_child(rtl)
 		vp.add_child(t_rect)
-		var grp = icon_child.to_string()
+		# The title is what actually is selected. That means the title needs to be the group
+		# UID since we look up the group by what was selected.
+		var grp = new_slide.to_string()
 		vp.add_to_group(grp)
 		# This vp needs to be a child or it won't render.
 		self.add_child(vp)
-		
-		# Set the preview then capture its texture so we can use it as a preview
 		
 		# Set the texture for this dictionary so that the on_multi_selected()
 		# doesn't select the currently selected background.
@@ -462,3 +503,20 @@ func _on_saveserviceas_button_up():
 func _on_confirmation_dialog_confirmed():
 	assert(queued_import != null, "This should be set before confirming an import")
 	make_set_slides(queued_import)
+
+func _on_text_edit_text_update(new_text):
+	if selected_item == null:
+		return
+	if not slide_tex_and_text.has(selected_item):
+		slide_tex_and_text[selected_item] = {}
+	slide_tex_and_text[selected_item].merge({'words' : new_text}, true)
+	
+	# Update the node's appearance too.
+	var is_set = selected_item.get_parent() == root
+	var slide_grp = selected_item.to_string()
+	var prev_node = get_tree().get_first_node_in_group(slide_grp)
+	assert(prev_node != null)
+	var t_tex_node = prev_node.get_child(0)
+	var words_node = t_tex_node.get_child(0)
+	var t_align = font_align.get_item_text(font_align.selected).to_lower()
+	words_node.text = "[p align=" + t_align + "]" + new_text + "[/p]"

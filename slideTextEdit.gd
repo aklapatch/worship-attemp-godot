@@ -6,7 +6,6 @@ func _on_slides_nothing_selected():
 	# Disallow editing when a slide isn't selected
 	self.editable = false
 	self.text = ""
-	pass # Replace with function body.
 
 func _on_text_changed():
 	text_update.emit(self.text)
