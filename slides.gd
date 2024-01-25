@@ -520,3 +520,25 @@ func _on_text_edit_text_update(new_text):
 	var words_node = t_tex_node.get_child(0)
 	var t_align = font_align.get_item_text(font_align.selected).to_lower()
 	words_node.text = "[p align=" + t_align + "]" + new_text + "[/p]"
+	
+func _get_drag_data(at_position):
+	var item = self.get_item_at_position(at_position)
+	if item == null:
+		return null
+	var parent = item.get_parent()
+	if parent != self.get_root() or parent.get_parent() != self.get_root():
+		return null
+	var prev_slides = Tree.new()
+	# TOOD: Add this slide or a duplicate to this tree
+	prev_slides.hide_root = true
+	var prev_root = prev_slides.create_item()
+	prev_root.add_child(item)
+	set_drag_preview(prev_slides)
+	return item
+	
+func _can_drop_data(at_position, data):
+	var drop_type = self.get_drop_section_at_position(at_position)
+	if drop_type == -1 or drop_type == 1:
+		self.drop_mode_flags = DROP_MODE_INBETWEEN
+		return true
+	return false
