@@ -526,7 +526,9 @@ func _get_drag_data(at_position):
 	if item == null:
 		return null
 	var parent = item.get_parent()
-	if parent != self.get_root() or parent.get_parent() != self.get_root():
+	var first_level = self.get_root() == parent
+	var second_level = self.get_root() == parent.get_parent()
+	if not (first_level or second_level):
 		return null
 	var prev_slides = Tree.new()
 	# TOOD: Add this slide or a duplicate to this tree
@@ -537,8 +539,28 @@ func _get_drag_data(at_position):
 	return item
 	
 func _can_drop_data(at_position, data):
+	self.drop_mode_flags = DROP_MODE_INBETWEEN
 	var drop_type = self.get_drop_section_at_position(at_position)
 	if drop_type == -1 or drop_type == 1:
-		self.drop_mode_flags = DROP_MODE_INBETWEEN
 		return true
 	return false
+	
+func _drop_data(at_position, data):
+	var rel_item = self.get_item_at_position(at_position)
+	assert(rel_item != null)
+	var drop_direction = self.get_drop_section_at_position(at_position)
+	assert(drop_direction == -1 or drop_direction == 1)
+	
+	# -1 is below, and 1 is above
+	var item_is_set = rel_item.get_parent() == self.get_root()
+	if item_is_set:
+		if drop_direction == -1:
+			rel_item.move_after(data)
+		else:
+			rel_item.move_before(data)
+	else:
+		var set_item = rel_item.get_parent()
+		if drop_direction == -1:
+			set_item.move_after(data)
+		else:
+			set_item.move_before(data)
