@@ -37,6 +37,8 @@ func _process(delta):
 	if Input.is_action_pressed("ui_delete"):
 		# Remove the selected child if one is selected
 		var selected = self.get_selected()
+		if selected == null:
+			return
 		# try to delete the preview viewport
 		var prev_node = get_tree().get_first_node_in_group(selected.to_string())
 		assert(prev_node != null)
@@ -497,8 +499,6 @@ func _on_saveserviceas_button_up():
 	# Save all the sets when we save the service. That makes sure the user gets
 	# The sets they expect when they load the service again.
 	_on_button_button_up()
-	pass # Replace with function body.
-
 
 func _on_confirmation_dialog_confirmed():
 	assert(queued_import != null, "This should be set before confirming an import")
@@ -534,33 +534,59 @@ func _get_drag_data(at_position):
 	# TOOD: Add this slide or a duplicate to this tree
 	prev_slides.hide_root = true
 	var prev_root = prev_slides.create_item()
-	prev_root.add_child(item)
+	var prev_slide = prev_root.create_child()
+	# Copy all the properties to the new node
+	var item_props = item.get_property_list()
+	for i_props in item_props:
+		for key in i_props.keys():
+			prev_slide.set(key, i_props[key])
 	set_drag_preview(prev_slides)
 	return item
 	
 func _can_drop_data(at_position, data):
 	self.drop_mode_flags = DROP_MODE_INBETWEEN
+	var rel_item = self.get_item_at_position(at_position)
+	if rel_item == null:
+		return false
+		
+	var rel_is_set = rel_item.get_parent() == self.get_root()
+	var child = rel_item.get_first_child()
+	if child == null and not rel_is_set:
+		return false
+
 	var drop_type = self.get_drop_section_at_position(at_position)
+	# only allow drops below sets
+	if drop_type == -1 and rel_item.get_parent() == self.get_root():
+		return false
 	if drop_type == -1 or drop_type == 1:
 		return true
 	return false
 	
+# TODO: The drag and drop logic should be refined. Adding undo would be helpful
+# but complicated. I could make dropping on a item drop below the item, which
+# might be helpful. Copy paste would be good to add too.
+# Having a drop on the icon slides drop below them would help too.
 func _drop_data(at_position, data):
 	var rel_item = self.get_item_at_position(at_position)
 	assert(rel_item != null)
 	var drop_direction = self.get_drop_section_at_position(at_position)
 	assert(drop_direction == -1 or drop_direction == 1)
 	
-	# -1 is below, and 1 is above
+	var data_is_set = data.get_parent() == self.get_root()
 	var item_is_set = rel_item.get_parent() == self.get_root()
-	if item_is_set:
-		if drop_direction == -1:
-			rel_item.move_after(data)
+	var move_to = rel_item
+	if data_is_set and not item_is_set:
+		move_to = rel_item.get_parent()
+	elif item_is_set and not data_is_set:
+		move_to = rel_item.get_first_child()
+		if move_to == null:
+			data.get_parent().remove_child(data)
+			rel_item.add_child(data)
 		else:
-			rel_item.move_before(data)
+			data.move_before(move_to)
+		return
+		
+	if drop_direction == 1:
+		data.move_after(move_to)
 	else:
-		var set_item = rel_item.get_parent()
-		if drop_direction == -1:
-			set_item.move_after(data)
-		else:
-			set_item.move_before(data)
+		data.move_before(move_to)
