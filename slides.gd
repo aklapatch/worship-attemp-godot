@@ -31,10 +31,12 @@ const icon_t_item = preload("res://cust_treeitem.gd")
 func _ready():
 	pass
 
+@onready var g_copy_items = null
+
 func _process(delta):
 	# TODO: Convert ui_delete to be an action added by add_action and action_add_event
 	# I prefer to have the code set something like that up, not sure why. I don't have the philosophy with signals
-	if Input.is_action_pressed("ui_delete"):
+	if Input.is_action_pressed("ui_text_delete"):
 		# Remove the selected child if one is selected
 		var selected = self.get_selected()
 		if selected == null:
@@ -45,6 +47,25 @@ func _process(delta):
 		prev_node.free()
 		if selected != null:
 			selected.free()
+	elif Input.is_action_pressed("ui_copy"):
+		g_copy_items = [self.get_selected()]
+		var sel_i = 0
+		while true:
+			var next_sel = self.get_next_selected(g_copy_items[sel_i])
+			if next_sel == null:
+				break
+			sel_i += 1
+			g_copy_items.append(next_sel)
+	elif Input.is_action_pressed("ui_paste"):
+		# See if the items are valid. We only needs slides
+		var copy_list = []
+		for item in g_copy_items:
+			var parent = item.get_parent()
+			if parent != self.get_root():
+				copy_list.append(item)
+
+		# Add the items
+		
 
 func _on_new_set_pressed():
 	# Create a new node from the root
@@ -532,14 +553,13 @@ func _get_drag_data(at_position):
 		return null
 	var prev_slides = Tree.new()
 	# TOOD: Add this slide or a duplicate to this tree
+	prev_slides.size = Vector2(200, 50)
 	prev_slides.hide_root = true
+	prev_slides.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	prev_slides.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var prev_root = prev_slides.create_item()
 	var prev_slide = prev_root.create_child()
-	# Copy all the properties to the new node
-	var item_props = item.get_property_list()
-	for i_props in item_props:
-		for key in i_props.keys():
-			prev_slide.set(key, i_props[key])
+	prev_slide.set_text(0, item.get_text(0))
 	set_drag_preview(prev_slides)
 	return item
 	
