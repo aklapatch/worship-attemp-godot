@@ -31,7 +31,7 @@ const icon_t_item = preload("res://cust_treeitem.gd")
 func _ready():
 	pass
 
-@onready var g_copy_items = null
+@onready var g_copy_items = []
 
 func _process(delta):
 	# TODO: Convert ui_delete to be an action added by add_action and action_add_event
@@ -48,24 +48,57 @@ func _process(delta):
 		if selected != null:
 			selected.free()
 	elif Input.is_action_pressed("ui_copy"):
-		g_copy_items = [self.get_selected()]
-		var sel_i = 0
+		var prev_item = null
+		g_copy_items = []
 		while true:
-			var next_sel = self.get_next_selected(g_copy_items[sel_i])
+			var next_sel = self.get_next_selected(prev_item)
 			if next_sel == null:
 				break
-			sel_i += 1
+			prev_item = next_sel
 			g_copy_items.append(next_sel)
 	elif Input.is_action_pressed("ui_paste"):
-		# See if the items are valid. We only needs slides
-		var copy_list = []
-		for item in g_copy_items:
-			var parent = item.get_parent()
-			if parent != self.get_root():
-				copy_list.append(item)
-
-		# Add the items
-		
+		var sel_item = self.get_selected()
+		if len(g_copy_items) > 0 and sel_item != null:
+			# Copy everything after this point.
+			# Copy the supporting viewports too.
+			# We'll need to change the groups the viewports are attached to, so
+			# that we can query them later.
+			var paste_base = sel_item
+			# Thankfully, the items come in the vertical order they were selected in.
+			# That means we can iterate over them in order and get the top down
+			# result we expect
+			# The behavior we want is complicated. If we're pasting onto a set,
+			# we want the slides to be pasted right under the set. The paste base
+			# should move because of that. It should move down with the set.
+			# But, if we paste a set, we should paste all the slides below it.
+			# That means we need to reach back and paste all the children under
+			# that set. 
+			for item in g_copy_items:
+				var item_is_set = item.get_parent() == self.get_root()
+				if item_is_set:
+					# add to root, not the item
+					var paste_item = self.get_root().create_child()
+					var move_after = paste_base if paste_base.get_parent() == self.get_root() else paste_base.get_parent()
+					paste_item.move_after(move_after)
+					var new_text = item.get_text(0)
+					paste_item.set_text(0, new_text)
+					paste_base = paste_item
+					# TODO: Copy all the children (sounds hard)
+				else:
+					var paste_item = null
+					if paste_base.get_parent() == self.get_root():
+						paste_item = paste_base.create_child(0)
+					else:
+						paste_item = paste_base.get_parent().create_child()
+						paste_item.move_after(paste_base)
+					var new_text = item.get_text(0)
+					paste_item.set_text(0, new_text)
+					var default_text = load("res://push_icon.png")
+					paste_item.add_button(0, default_text)
+					paste_base = paste_item
+					# TODO: Copy icon children and nodes (sounds hard)
+					
+			g_copy_items = []
 
 func _on_new_set_pressed():
 	# Create a new node from the root
